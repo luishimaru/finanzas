@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>De Grano en Grano - V9 Estricta</title>
+    <title>DGG Finanzas | Tu Gestor de Patrimonio</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -15,47 +19,87 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
-        tailwind.config = { theme: { extend: { colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 800: '#166534' } } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+                    colors: { 
+                        brand: { 
+                            50: '#f1f8f3', 
+                            100: '#dcfce7', 
+                            500: '#2e7d32', // Verde DGG Web
+                            600: '#1b5e20', 
+                            800: '#14532d',
+                            cream: '#fcfbf7' // Color crema de tu web
+                        } 
+                    } 
+                } 
+            } 
+        }
     </script>
     <style>
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f9fafb; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #fcfbf7; }
+        
+        /* Fondo degradado estilo DGG */
+        .bg-dgg-gradient {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        }
     </style>
 </head>
-<body class="text-gray-800 h-screen flex overflow-hidden">
+<body class="text-gray-800 h-screen flex overflow-hidden bg-brand-cream">
 
     <div id="app" class="flex w-full h-full relative">
         
-        <div v-if="appState === 'loading'" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-500 mb-4"></div>
-            <p class="text-gray-500 font-medium animate-pulse">{{ loadingMessage }}</p>
+        <div v-if="appState === 'loading'" class="fixed inset-0 z-[100] bg-brand-cream flex flex-col items-center justify-center">
+            <img src="logo.png" class="w-20 h-20 mb-4 animate-bounce" alt="Logo">
+            <p class="text-brand-600 font-bold animate-pulse">{{ loadingMessage }}</p>
         </div>
 
-        <div v-else-if="appState === 'login'" class="absolute inset-0 z-50 bg-gray-50 flex items-center justify-center p-4">
-            <div class="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full border border-gray-100">
-                <div class="mb-6 inline-block p-4 bg-brand-50 rounded-full text-brand-600 text-4xl shadow-inner">
-                    <i class="fa-solid fa-leaf"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">Bienvenido</h1>
-                <p class="text-gray-500 mb-8 text-sm">Gestiona tus finanzas de forma segura en la nube.</p>
+        <div v-else-if="appState === 'login'" class="absolute inset-0 z-50 flex flex-col md:flex-row">
+            
+            <div class="w-full md:w-1/2 bg-dgg-gradient flex flex-col justify-center items-center p-10 text-white relative overflow-hidden">
+                <i class="fa-solid fa-chart-line absolute top-10 left-10 text-9xl opacity-10"></i>
+                <i class="fa-solid fa-coins absolute bottom-10 right-10 text-9xl opacity-10"></i>
                 
-                <button @click="login" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 hover:shadow-md transition flex items-center justify-center gap-3 active:scale-95 duration-150">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6">
-                    Iniciar con Google
-                </button>
+                <div class="z-10 text-center max-w-md">
+                    <img src="logo.png" class="w-24 h-24 mx-auto mb-6 bg-white rounded-full p-2 shadow-lg" alt="De Grano en Grano Logo">
+                    <h1 class="text-4xl font-bold mb-4 tracking-tight">Construye tu Patrimonio Sólido</h1>
+                    <p class="text-lg opacity-90 mb-8 font-light">La herramienta complementaria para aplicar la estrategia de interés compuesto y gestionar tus finanzas reales.</p>
+                    
+                    <div class="flex gap-4 justify-center text-sm opacity-80">
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-check-circle"></i> Sin contraseñas</div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-check-circle"></i> 100% Seguro</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2 bg-brand-cream flex items-center justify-center p-8">
+                <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Bienvenido a DGG Finanzas</h2>
+                    <p class="text-gray-500 mb-8 text-sm">Inicia sesión para sincronizar tus dispositivos.</p>
+                    
+                    <button @click="login" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-4 px-4 rounded-xl hover:bg-gray-50 hover:shadow-md transition flex items-center justify-center gap-3 group">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 group-hover:scale-110 transition">
+                        <span>Continuar con Google</span>
+                    </button>
+                    
+                    <p class="text-xs text-center text-gray-400 mt-6">
+                        Al continuar, aceptas gestionar tus finanzas con responsabilidad 🚀
+                    </p>
+                </div>
             </div>
         </div>
 
         <template v-else-if="appState === 'ready'">
-            <aside class="w-20 md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-20">
+            <aside class="w-20 md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-20 shadow-sm">
                 <div>
-                    <div class="h-16 flex items-center justify-center md:justify-start md:px-6 border-b border-gray-100">
-                        <i class="fa-solid fa-leaf text-brand-500 text-2xl mr-0 md:mr-3"></i>
-                        <span class="font-bold text-xl hidden md:block text-brand-800 tracking-tight">DGEG App</span>
+                    <div class="h-20 flex items-center justify-center md:justify-start md:px-6 border-b border-gray-100 bg-brand-cream">
+                        <img src="logo.png" class="w-10 h-10 mr-0 md:mr-3" alt="Logo">
+                        <div class="hidden md:block">
+                            <h1 class="font-bold text-brand-800 text-sm leading-tight">DE GRANO<br>EN GRANO</h1>
+                        </div>
                     </div>
                     <nav class="mt-6 flex flex-col gap-2 px-2 md:px-4">
                         <button @click="currentView = 'dashboard'" :class="navClass('dashboard')"><i class="fa-solid fa-chart-pie w-6 text-center"></i><span class="hidden md:block">Resumen</span></button>
@@ -64,55 +108,59 @@
                     </nav>
                 </div>
                 
-                <div class="p-4 border-t border-gray-100 text-center">
-                    <img v-if="user" :src="user.photoURL" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-brand-500">
-                    <p v-if="user" class="text-xs font-bold text-gray-700 truncate">{{ user.displayName }}</p>
-                    <button @click="logout" class="text-xs text-red-500 hover:underline mt-2 bg-red-50 px-3 py-1 rounded-full w-full">
-                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir
-                    </button>
+                <div class="p-4 border-t border-gray-100 bg-gray-50">
+                    <div v-if="user" class="flex flex-col items-center">
+                        <img :src="user.photoURL" class="w-10 h-10 rounded-full mb-2 border-2 border-brand-500 shadow-sm">
+                        <p class="text-xs font-bold text-gray-700 truncate w-full text-center">{{ user.displayName }}</p>
+                        <button @click="logout" class="text-xs text-red-500 hover:text-red-700 font-semibold mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-right-from-bracket"></i> Salir
+                        </button>
+                    </div>
                 </div>
             </aside>
 
-            <main class="flex-1 overflow-y-auto p-4 md:p-8 relative bg-gray-50">
+            <main class="flex-1 overflow-y-auto p-4 md:p-8 relative bg-brand-cream">
                 
                 <div v-if="currentView === 'dashboard'" class="space-y-8 animate-fade">
                     <header class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-800">Panel de Control</h1>
-                            <p class="text-sm text-gray-500">Viendo: <strong>{{ formatMonthYear(selectedDate) }}</strong></p>
+                            <h1 class="text-2xl font-bold text-brand-800">Panel de Control</h1>
+                            <p class="text-sm text-gray-500">Estado financiero de: <strong>{{ formatMonthYear(selectedDate) }}</strong></p>
                         </div>
-                        <input type="month" v-model="selectedDate" @change="updateCharts" class="border border-gray-300 rounded-lg px-4 py-2 bg-white shadow-sm cursor-pointer">
+                        <div class="relative">
+                            <input type="month" v-model="selectedDate" class="border border-gray-300 rounded-lg px-4 py-2 bg-white shadow-sm cursor-pointer text-brand-800 font-medium focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
                     </header>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-gray-500 font-medium block mb-2">Balance Total</span>
+                            <span class="text-gray-500 font-semibold text-xs uppercase tracking-wide block mb-2">Balance Acumulado</span>
                             <div class="text-3xl font-bold text-gray-900">{{ formatCurrency(totalBalance) }}</div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-green-600 font-medium block mb-2">Ingresos (Mes)</span>
+                            <span class="text-green-600 font-semibold text-xs uppercase tracking-wide block mb-2">Ingresos (Mes)</span>
                             <div class="text-2xl font-bold text-gray-800">+{{ formatCurrency(monthlyIncome) }}</div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-red-500 font-medium block mb-2">Gastos (Mes)</span>
+                            <span class="text-red-500 font-semibold text-xs uppercase tracking-wide block mb-2">Gastos (Mes)</span>
                             <div class="text-2xl font-bold text-gray-800">-{{ formatCurrency(monthlyExpense) }}</div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-brand-600 font-medium block mb-2">Inversión (Mes)</span>
-                            <div class="text-2xl font-bold text-gray-800">{{ formatCurrency(monthlyInvestment) }}</div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-b-4 border-b-brand-500">
+                            <span class="text-brand-600 font-semibold text-xs uppercase tracking-wide block mb-2">Inversión (Mes)</span>
+                            <div class="text-2xl font-bold text-brand-800">{{ formatCurrency(monthlyInvestment) }}</div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-1">
-                            <h3 class="font-bold text-gray-700 mb-4">Gastos este Mes</h3>
+                            <h3 class="font-bold text-brand-800 mb-4">Distribución de Gastos</h3>
                             <div class="relative h-64 w-full flex items-center justify-center">
                                 <canvas id="categoryChart"></canvas>
-                                <p v-if="monthlyExpense === 0" class="absolute text-gray-400 text-sm">Sin gastos este mes</p>
+                                <p v-if="monthlyExpense === 0" class="absolute text-gray-400 text-sm">Sin datos este mes</p>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-2">
-                            <h3 class="font-bold text-gray-700 mb-4">Historial 6 Meses</h3>
+                            <h3 class="font-bold text-brand-800 mb-4">Comportamiento Semestral</h3>
                             <div class="relative h-64 w-full"><canvas id="historyChart"></canvas></div>
                         </div>
                     </div>
@@ -120,58 +168,63 @@
 
                 <div v-if="currentView === 'transactions'" class="animate-fade space-y-6">
                     <header class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-800">Movimientos</h1>
-                        <button @click="exportToCSV" class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-800 shadow-sm"><i class="fa-solid fa-file-excel mr-2"></i>Descargar Excel</button>
+                        <h1 class="text-2xl font-bold text-brand-800">Libro Diario</h1>
+                        <button @click="exportToCSV" class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-800 shadow-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-csv"></i> Descargar Reporte
+                        </button>
                     </header>
-                    <input v-model="searchTerm" type="text" placeholder="Buscar..." class="w-full border p-3 rounded-lg shadow-sm focus:outline-none focus:border-brand-500">
+                    <input v-model="searchTerm" type="text" placeholder="Buscar por descripción, categoría o cuenta..." class="w-full border p-4 rounded-xl shadow-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                         <table class="w-full text-sm text-left text-gray-600">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
-                                <tr><th class="px-6 py-3">Fecha</th><th class="px-6 py-3">Descripción</th><th class="px-6 py-3">Cat/Cta</th><th class="px-6 py-3 text-right">Monto</th><th class="px-6 py-3 text-center"></th></tr>
+                            <thead class="text-xs text-brand-800 uppercase bg-brand-50 border-b">
+                                <tr><th class="px-6 py-3">Fecha</th><th class="px-6 py-3">Descripción</th><th class="px-6 py-3">Detalle</th><th class="px-6 py-3 text-right">Monto</th><th class="px-6 py-3 text-center"></th></tr>
                             </thead>
                             <tbody>
-                                <tr v-for="t in filteredTransactions" :key="t.id" class="border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4">{{ formatDate(t.date) }}</td>
+                                <tr v-for="t in filteredTransactions" :key="t.id" class="border-b hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(t.date) }}</td>
                                     <td class="px-6 py-4 font-medium text-gray-900">{{ t.description }}</td>
                                     <td class="px-6 py-4">
-                                        <span class="bg-gray-100 px-2 py-1 rounded text-xs mr-1">{{ t.category }}</span>
-                                        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs">{{ t.account }}</span>
+                                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs mr-1 border border-gray-200">{{ t.category }}</span>
+                                        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs border border-blue-100">{{ t.account }}</span>
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold" :class="t.type === 'expense' ? 'text-red-500' : 'text-green-600'">{{ t.type === 'expense' ? '-' : '+' }} {{ formatCurrency(t.amount) }}</td>
-                                    <td class="px-6 py-4 text-center"><button @click="deleteTransaction(t.id)" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td>
+                                    <td class="px-6 py-4 text-center"><button @click="deleteTransaction(t.id)" class="text-gray-300 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button></td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div v-if="filteredTransactions.length === 0" class="p-8 text-center text-gray-400">No hay movimientos para mostrar.</div>
+                        <div v-if="filteredTransactions.length === 0" class="p-12 text-center text-gray-400 bg-white">
+                            <i class="fa-solid fa-wind text-4xl mb-3 opacity-30"></i>
+                            <p>No se encontraron movimientos.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div v-if="currentView === 'goals'" class="animate-fade space-y-6">
                     <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-800">Metas</h1>
-                        <button @click="openGoalModal" class="bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700"><i class="fa-solid fa-plus mr-2"></i>Nueva Meta</button>
+                        <h1 class="text-2xl font-bold text-brand-800">Metas de Patrimonio</h1>
+                        <button @click="openGoalModal" class="bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 shadow-md transition"><i class="fa-solid fa-plus mr-2"></i>Nueva Meta</button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div v-for="goal in goals" :key="goal.id" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative group overflow-hidden">
+                        <div v-for="goal in goals" :key="goal.id" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative group overflow-hidden hover:shadow-md transition">
                             <div class="flex justify-between items-start mb-4 relative z-10">
                                 <div>
-                                    <h3 class="text-lg font-bold text-gray-800">{{ goal.name }}</h3>
-                                    <div class="text-xs text-gray-500 mt-1">Vinculada a: <strong class="text-brand-700">{{ goal.linkedAccount }}</strong></div>
+                                    <h3 class="text-lg font-bold text-brand-800">{{ goal.name }}</h3>
+                                    <div class="text-xs text-gray-500 mt-1">Invirtiendo en: <strong class="text-brand-600">{{ goal.linkedAccount }}</strong></div>
                                 </div>
-                                <button @click="deleteGoal(goal.id)" class="text-gray-300 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
+                                <button @click="deleteGoal(goal.id)" class="text-gray-300 hover:text-red-400 transition"><i class="fa-solid fa-xmark"></i></button>
                             </div>
-                            <div class="relative z-10 mb-4">
+                            <div class="relative z-10 mb-6">
                                 <div class="flex justify-between text-sm mb-1">
-                                    <span class="text-gray-600">Actual: {{ formatCurrency(getTotalGoalBalance(goal)) }}</span>
-                                    <span class="font-bold">Meta: {{ formatCurrency(goal.targetAmount) }}</span>
+                                    <span class="text-gray-600 font-medium">Acumulado: {{ formatCurrency(getTotalGoalBalance(goal)) }}</span>
+                                    <span class="font-bold text-brand-800">Objetivo: {{ formatCurrency(goal.targetAmount) }}</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-brand-500 h-2 rounded-full transition-all duration-1000" :style="{ width: Math.min((getTotalGoalBalance(goal) / goal.targetAmount * 100), 100) + '%' }"></div></div>
+                                <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-brand-500 h-2 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(46,125,50,0.5)]" :style="{ width: Math.min((getTotalGoalBalance(goal) / goal.targetAmount * 100), 100) + '%' }"></div></div>
                             </div>
-                            <div class="bg-brand-50 p-3 rounded-lg border border-brand-100 text-sm relative z-10 flex gap-3 items-center">
-                                <i class="fa-solid fa-clock text-brand-600 text-xl"></i>
+                            <div class="bg-brand-50 p-4 rounded-lg border border-brand-100 text-sm relative z-10 flex gap-4 items-center">
+                                <div class="bg-white p-3 rounded-full text-brand-600 shadow-sm"><i class="fa-solid fa-hourglass-half text-xl"></i></div>
                                 <div>
-                                    <p class="font-bold text-brand-900">{{ calculateDynamicProjection(goal) }} meses restantes</p>
-                                    <p class="text-[10px] text-brand-700">Ahorrando {{ formatCurrency(goal.monthlyContribution) }}/mes + {{ goal.apy }}% E.A.</p>
+                                    <p class="font-bold text-brand-900 text-lg">{{ calculateDynamicProjection(goal) }} meses</p>
+                                    <p class="text-[11px] text-brand-700 leading-tight">Proyección basada en plan mensual de {{ formatCurrency(goal.monthlyContribution) }} + {{ goal.apy }}% E.A.</p>
                                 </div>
                             </div>
                         </div>
@@ -180,47 +233,80 @@
                 <div class="h-24"></div>
             </main>
 
-            <button @click="openModal" class="absolute bottom-6 right-6 w-14 h-14 bg-brand-600 text-white rounded-full shadow-lg hover:bg-brand-700 hover:scale-110 transition-all flex items-center justify-center z-50 text-2xl"><i class="fa-solid fa-plus"></i></button>
+            <button @click="openModal" class="absolute bottom-8 right-8 w-16 h-16 bg-brand-600 text-white rounded-full shadow-lg hover:bg-brand-700 hover:scale-110 hover:rotate-90 transition-all duration-300 flex items-center justify-center z-50 text-3xl ring-4 ring-brand-100"><i class="fa-solid fa-plus"></i></button>
 
             <div v-if="isModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                <div class="absolute inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm" @click="closeModal"></div>
-                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden">
-                    <div class="bg-brand-600 px-6 py-4 flex justify-between items-center text-white"><h3 class="font-bold">Registrar</h3><button @click="closeModal"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="absolute inset-0 bg-brand-800 bg-opacity-60 backdrop-blur-sm" @click="closeModal"></div>
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden transform transition-all">
+                    <div class="bg-brand-600 px-6 py-4 flex justify-between items-center text-white">
+                        <h3 class="font-bold text-lg">Registrar Movimiento</h3>
+                        <button @click="closeModal" class="hover:bg-brand-700 p-1 rounded"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
                     <form @submit.prevent="addTransaction" class="p-6 space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="cursor-pointer"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="p-2 text-center border rounded-lg peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700">Ingreso</div></label>
-                            <label class="cursor-pointer"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="p-2 text-center border rounded-lg peer-checked:bg-red-100 peer-checked:border-red-500 peer-checked:text-red-700">Gasto</div></label>
+                        <div class="grid grid-cols-2 gap-3 p-1 bg-gray-100 rounded-lg">
+                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="py-2 text-center rounded-md text-sm font-bold text-gray-500 peer-checked:bg-white peer-checked:text-green-600 peer-checked:shadow-sm transition">Ingreso</div></label>
+                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="py-2 text-center rounded-md text-sm font-bold text-gray-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition">Gasto</div></label>
                         </div>
-                        <input v-model.number="form.amount" type="number" required placeholder="Monto" class="w-full p-3 border rounded-lg">
-                        <input v-model="form.description" type="text" required placeholder="Descripción" class="w-full p-3 border rounded-lg">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs text-gray-500">Categoría</label><select v-model="form.category" class="w-full p-2 border rounded-lg bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Nueva</option></select></div>
-                            <div><label class="text-xs text-gray-500">Cuenta</label><select v-model="form.account" class="w-full p-2 border rounded-lg bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Nueva</option></select></div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Monto</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-gray-400 font-bold">$</span>
+                                <input v-model.number="form.amount" type="number" required placeholder="0" class="w-full pl-8 p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-lg font-bold">
+                            </div>
                         </div>
-                        <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nombre nueva categoría..." class="w-full p-2 border border-brand-300 rounded-lg">
-                        <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nombre nueva cuenta..." class="w-full p-2 border border-blue-300 rounded-lg">
-                        <input v-model="form.date" type="date" required class="w-full p-3 border rounded-lg">
-                        <button type="submit" :disabled="isSubmitting" class="w-full bg-brand-600 text-white py-3 rounded-lg font-bold hover:bg-brand-700 disabled:opacity-50">{{ isSubmitting ? 'Guardando...' : 'Guardar' }}</button>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Descripción</label>
+                            <input v-model="form.description" type="text" required placeholder="Ej: Arriendo, Salario..." class="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Categoría</label><select v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-brand-500"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear Nueva</option></select></div>
+                            <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Cuenta</label><select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-brand-500"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear Nueva</option></select></div>
+                        </div>
+                        
+                        <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nombre de la nueva categoría..." class="w-full p-3 border border-brand-300 bg-brand-50 rounded-xl">
+                        <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nombre de la nueva cuenta..." class="w-full p-3 border border-blue-200 bg-blue-50 rounded-xl">
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha</label>
+                            <input v-model="form.date" type="date" required class="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-500">
+                        </div>
+
+                        <button type="submit" :disabled="isSubmitting" class="w-full bg-brand-600 text-white py-4 rounded-xl font-bold hover:bg-brand-700 transition shadow-lg transform active:scale-95 disabled:opacity-50 disabled:scale-100">
+                            {{ isSubmitting ? 'Guardando...' : 'Guardar Movimiento' }}
+                        </button>
                     </form>
                 </div>
             </div>
 
             <div v-if="isGoalModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                <div class="absolute inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm" @click="closeGoalModal"></div>
-                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md relative z-10">
-                    <div class="bg-purple-600 px-6 py-4 flex justify-between items-center text-white rounded-t-xl"><h3 class="font-bold">Nueva Meta</h3><button @click="closeGoalModal"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="absolute inset-0 bg-brand-800 bg-opacity-60 backdrop-blur-sm" @click="closeGoalModal"></div>
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden">
+                    <div class="bg-brand-800 px-6 py-4 flex justify-between items-center text-white">
+                        <h3 class="font-bold text-lg">Nueva Meta de Patrimonio</h3>
+                        <button @click="closeGoalModal" class="hover:bg-brand-700 p-1 rounded"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
                     <form @submit.prevent="addGoal" class="p-6 space-y-4">
-                        <input v-model="goalForm.name" type="text" required placeholder="Nombre Meta" class="w-full p-2 border rounded-lg">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs text-gray-500">Meta Final</label><input v-model.number="goalForm.targetAmount" type="number" required class="w-full p-2 border rounded-lg"></div>
-                            <div><label class="text-xs text-gray-500">Base Inicial</label><input v-model.number="goalForm.initialAmount" type="number" required class="w-full p-2 border rounded-lg"></div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre de la Meta</label>
+                            <input v-model="goalForm.name" type="text" required placeholder="Ej: Comprar Casa, Moto..." class="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-500">
                         </div>
-                        <div><label class="text-xs text-gray-500">Cuenta Vinculada</label><select v-model="goalForm.linkedAccount" class="w-full p-2 border rounded-lg bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option></select></div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs text-gray-500">Interés E.A</label><input v-model.number="goalForm.apy" type="number" step="0.01" class="w-full p-2 border rounded-lg"></div>
-                            <div><label class="text-xs text-gray-500">Plan Mensual</label><input v-model.number="goalForm.monthlyContribution" type="number" required class="w-full p-2 border rounded-lg"></div>
+                            <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Valor Objetivo</label><input v-model.number="goalForm.targetAmount" type="number" required class="w-full p-3 border border-gray-200 rounded-xl"></div>
+                            <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Base Inicial ($)</label><input v-model.number="goalForm.initialAmount" type="number" required class="w-full p-3 border border-gray-200 rounded-xl"></div>
                         </div>
-                        <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">Crear Meta</button>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Cuenta de Inversión Vinculada</label>
+                            <select v-model="goalForm.linkedAccount" class="w-full p-3 border border-gray-200 rounded-xl bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option></select>
+                            <p class="text-[10px] text-gray-400 mt-1">Los movimientos de "Inversión" en esta cuenta sumarán a la meta.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rentabilidad E.A (%)</label><input v-model.number="goalForm.apy" type="number" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl"></div>
+                            <div><label class="block text-xs font-bold text-brand-600 uppercase mb-1">Plan Mensual</label><input v-model.number="goalForm.monthlyContribution" type="number" required class="w-full p-3 border border-brand-200 bg-brand-50 rounded-xl font-bold text-brand-800"></div>
+                        </div>
+                        <button type="submit" class="w-full bg-brand-800 text-white py-4 rounded-xl font-bold hover:bg-brand-900 transition shadow-lg transform active:scale-95">Crear Meta</button>
                     </form>
                 </div>
             </div>
@@ -228,7 +314,7 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN FIREBASE (Tus datos)
+        // CONFIGURACIÓN FIREBASE (TUS DATOS REALES DE V9)
         const firebaseConfig = {
             apiKey: "AIzaSyDhRNMv23s-v0BPcozOJL5Zjl_j06akf_A",
             authDomain: "de-grano-en-grano-b8882.firebaseapp.com",
@@ -247,10 +333,8 @@
 
         createApp({
             setup() {
-                // ESTADO DE LA APP: 'loading' | 'login' | 'ready'
                 const appState = ref('loading'); 
-                const loadingMessage = ref('Conectando con el servidor...');
-                
+                const loadingMessage = ref('Conectando con DGG Finanzas...');
                 const user = ref(null);
                 const currentView = ref('dashboard');
                 const isModalOpen = ref(false);
@@ -268,21 +352,18 @@
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
                 const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
-                // --- GESTIÓN DE ESTADO Y CARGA ---
+                // AUTH & DATA
                 onMounted(() => {
                     auth.onAuthStateChanged(async (u) => {
                         if (u) {
-                            // Usuario detectado -> Cargar datos
                             user.value = u;
-                            loadingMessage.value = "Descargando tus finanzas...";
+                            loadingMessage.value = "Sincronizando tu patrimonio...";
                             await loadUserData(u.uid);
-                            appState.value = 'ready'; // Abrir la App
-                            nextTick(() => renderCharts()); // Dibujar gráficos
+                            appState.value = 'ready';
+                            nextTick(() => renderCharts());
                         } else {
-                            // Sin usuario -> Mostrar Login
                             user.value = null;
-                            transactions.value = []; 
-                            goals.value = [];
+                            transactions.value = []; goals.value = [];
                             appState.value = 'login';
                         }
                     });
@@ -298,51 +379,29 @@
                             if(data.categories) categories.value = [...new Set([...categories.value, ...data.categories])];
                             if(data.accounts) accounts.value = [...new Set([...accounts.value, ...data.accounts])];
                         }
-                    } catch (e) {
-                        console.error("Error cargando:", e);
-                        alert("Error de conexión. Recarga la página.");
-                    }
+                    } catch (e) { console.error(e); }
                 };
 
                 const saveToCloud = async () => {
                     if (!user.value) return;
-                    try {
-                        await db.collection('users').doc(user.value.uid).set({
-                            transactions: transactions.value,
-                            goals: goals.value,
-                            categories: categories.value,
-                            accounts: accounts.value,
-                            lastUpdate: new Date().toISOString()
-                        });
-                    } catch (e) {
-                        alert("Error guardando en la nube: " + e.message);
-                    }
+                    await db.collection('users').doc(user.value.uid).set({
+                        transactions: transactions.value,
+                        goals: goals.value,
+                        categories: categories.value,
+                        accounts: accounts.value,
+                        lastUpdate: new Date().toISOString()
+                    });
                 };
 
-                const login = async () => {
-                    try { await auth.signInWithPopup(provider); } 
-                    catch (e) { alert("No se pudo entrar: " + e.message); }
-                };
+                const login = async () => { try { await auth.signInWithPopup(provider); } catch (e) { alert(e.message); } };
+                const logout = async () => { appState.value = 'loading'; await auth.signOut(); window.location.reload(); };
 
-                const logout = async () => {
-                    appState.value = 'loading'; // Mostrar carga mientras sale
-                    loadingMessage.value = "Cerrando sesión...";
-                    await auth.signOut();
-                    window.location.reload(); // Limpieza total de memoria
-                };
-
-                // --- NEGOCIO (Idéntico a V8 pero seguro) ---
+                // NEGOCIO
                 const addTransaction = async () => {
                     if (isSubmitting.value) return; isSubmitting.value = true;
                     try {
-                        if (form.value.category === 'new') {
-                            const name = newCategoryName.value.trim();
-                            if (name) { categories.value.push(name); form.value.category = name; } else throw new Error("Falta nombre categoría");
-                        }
-                        if (form.value.account === 'new') {
-                            const name = newAccountName.value.trim();
-                            if (name) { accounts.value.push(name); form.value.account = name; } else throw new Error("Falta nombre cuenta");
-                        }
+                        if (form.value.category === 'new') { const n = newCategoryName.value.trim(); if(n){categories.value.push(n); form.value.category=n;} else throw new Error("Nombre categoría requerido"); }
+                        if (form.value.account === 'new') { const n = newAccountName.value.trim(); if(n){accounts.value.push(n); form.value.account=n;} else throw new Error("Nombre cuenta requerido"); }
                         transactions.value.push({ id: Date.now(), ...form.value });
                         await saveToCloud();
                         form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] };
@@ -350,20 +409,11 @@
                         closeModal(); updateCharts();
                     } catch (e) { alert(e.message); } finally { isSubmitting.value = false; }
                 };
+                const deleteTransaction = async (id) => { if(confirm("¿Borrar?")) { transactions.value = transactions.value.filter(t => t.id !== id); await saveToCloud(); updateCharts(); }};
+                const addGoal = async () => { goals.value.push({ id: Date.now(), ...goalForm.value }); await saveToCloud(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 }; };
+                const deleteGoal = async (id) => { if(confirm("¿Borrar meta?")) { goals.value = goals.value.filter(g => g.id !== id); await saveToCloud(); }};
 
-                const deleteTransaction = async (id) => {
-                    if(confirm("¿Eliminar?")) { transactions.value = transactions.value.filter(t => t.id !== id); await saveToCloud(); updateCharts(); }
-                };
-
-                const addGoal = async () => {
-                    goals.value.push({ id: Date.now(), ...goalForm.value }); await saveToCloud(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 };
-                };
-
-                const deleteGoal = async (id) => {
-                    if(confirm("¿Eliminar meta?")) { goals.value = goals.value.filter(g => g.id !== id); await saveToCloud(); }
-                };
-
-                // --- UTILS & CHARTS ---
+                // UTILS
                 const openModal = () => { isSubmitting.value = false; isModalOpen.value = true; };
                 const closeModal = () => isModalOpen.value = false;
                 const openGoalModal = () => isGoalModalOpen.value = true;
@@ -371,38 +421,36 @@
                 const formatCurrency = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
                 const formatDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                 const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
-                const navClass = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-r-4 border-brand-500 w-full" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-900 w-full";
+                const navClass = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-l-4 border-brand-500 w-full shadow-sm" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 w-full transition";
 
                 const exportToCSV = () => {
                     const headers = ["Fecha", "Tipo", "Categoria", "Cuenta", "Descripcion", "Monto"];
                     const rows = transactions.value.map(t => [t.date, t.type, t.category, t.account, `"${t.description}"`, t.amount]);
                     const csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
-                    const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `finanzas_backup.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `dgg_finanzas_${new Date().toISOString().slice(0,10)}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
 
-                const getTransactionsByMonth = () => {
-                    if(!selectedDate.value) return [];
-                    const [y, m] = selectedDate.value.split('-');
-                    return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(month) - 1) && d.getFullYear() === parseInt(year); });
-                };
-                // Fix filtro fecha (reutilizando lógica segura)
+                // COMPUTED & CHARTS
                 const getFiltered = () => {
                     if(!selectedDate.value) return [];
                     const [y, m] = selectedDate.value.split('-');
-                    return transactions.value.filter(t => {
-                        const d = new Date(t.date + 'T00:00:00');
-                        return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y);
-                    });
+                    return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y); });
                 };
-
                 const totalBalance = computed(() => transactions.value.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0));
                 const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0));
                 const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0));
                 const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + t.amount, 0));
-                const filteredTransactions = computed(() => { let txs = transactions.value; if (searchTerm.value) { const term = searchTerm.value.toLowerCase(); txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); } return txs.sort((a,b) => new Date(b.date) - new Date(a.date)); });
-
-                const getTotalGoalBalance = (goal) => { const inv = transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + t.amount, 0); return (goal.initialAmount || 0) + inv; };
-                const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
+                const filteredTransactions = computed(() => {
+                    let txs = transactions.value;
+                    if (searchTerm.value) { const term = searchTerm.value.toLowerCase(); txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); }
+                    return txs.sort((a,b) => new Date(b.date) - new Date(a.date));
+                });
+                const getTotalGoalBalance = (goal) => { return (goal.initialAmount || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + t.amount, 0); };
+                const calculateDynamicProjection = (goal) => { 
+                    const ct = getTotalGoalBalance(goal); 
+                    if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; 
+                    const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } 
+                };
 
                 let chartCat = null, chartHist = null;
                 const renderCharts = async () => {
@@ -410,14 +458,11 @@
                     const ctxCat = document.getElementById('categoryChart'); const ctxHist = document.getElementById('historyChart');
                     if (!ctxCat || !ctxHist) return;
                     if (chartCat) chartCat.destroy(); if (chartHist) chartHist.destroy();
-
                     const cats = {}; getFiltered().filter(t => t.type === 'expense').forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
-                    chartCat = new Chart(ctxCat, { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#22c55e','#14b8a6','#f59e0b','#ef4444','#6366f1','#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
-
-                    const months = {}; 
-                    transactions.value.forEach(t => { const k = t.date.substring(0, 7); if(!months[k]) months[k] = { inc: 0, exp: 0 }; t.type === 'income' ? months[k].inc += t.amount : months[k].exp += t.amount; });
+                    chartCat = new Chart(ctxCat, { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#2e7d32','#1b5e20','#f9a825','#c62828','#1565c0','#6a1b9a'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
+                    const months = {}; transactions.value.forEach(t => { const k = t.date.substring(0, 7); if(!months[k]) months[k] = { inc: 0, exp: 0 }; t.type === 'income' ? months[k].inc += t.amount : months[k].exp += t.amount; });
                     const labels = Object.keys(months).sort().slice(-6);
-                    chartHist = new Chart(ctxHist, { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#22c55e' }, { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#ef4444' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false } } } });
+                    chartHist = new Chart(ctxHist, { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#2e7d32' }, { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#c62828' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false } } } });
                 };
                 const updateCharts = () => { if (currentView.value === 'dashboard') renderCharts(); };
                 watch(currentView, (v) => { if(v==='dashboard') renderCharts(); });
