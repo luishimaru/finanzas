@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>De Grano en Grano - Cloud V7</title>
+    <title>De Grano en Grano - V8 Final</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -48,23 +48,23 @@
                     <img :src="user.photoURL" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-brand-500">
                     <p class="text-xs font-bold text-gray-700 truncate">{{ user.displayName }}</p>
                     <button @click="logout" class="text-xs text-red-500 hover:underline mt-1">Cerrar Sesión</button>
-                    <p class="text-[10px] text-green-600 mt-2 flex items-center justify-center gap-1"><i class="fa-solid fa-cloud"></i> Sincronizado</p>
+                    <p class="text-[10px] text-green-600 mt-2 flex items-center justify-center gap-1"><i class="fa-solid fa-cloud"></i> Nube Activa</p>
                 </div>
                 <div v-else class="text-center">
                     <button @click="login" class="w-full bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 px-2 rounded hover:bg-gray-50 flex items-center justify-center gap-2 shadow-sm">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4">
-                        <span class="hidden md:inline">Entrar con Google</span>
-                        <span class="md:hidden">Entrar</span>
+                        <span class="hidden md:inline">Entrar con Google</span><span class="md:hidden">Login</span>
                     </button>
-                    <p class="text-[10px] text-gray-400 mt-2">Guarda tus datos en la nube</p>
+                    <p class="text-[10px] text-gray-400 mt-2">Modo Local (Sin respaldo)</p>
                 </div>
             </div>
         </aside>
 
         <main class="flex-1 overflow-y-auto p-4 md:p-8 relative bg-gray-50">
             
-            <div v-if="isLoading" class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center">
+            <div v-if="isLoading" class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center flex-col gap-4">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
+                <p class="text-sm text-gray-500 animate-pulse">{{ loadingMessage }}</p>
             </div>
 
             <div v-if="currentView === 'dashboard'" class="space-y-8 animate-fade">
@@ -170,14 +170,14 @@
                         <label class="cursor-pointer"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="p-2 text-center border rounded-lg peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 transition">Ingreso</div></label>
                         <label class="cursor-pointer"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="p-2 text-center border rounded-lg peer-checked:bg-red-100 peer-checked:border-red-500 peer-checked:text-red-700 transition">Gasto</div></label>
                     </div>
-                    <input v-model.number="form.amount" type="number" required placeholder="Monto ($)" class="w-full p-3 border rounded-lg focus:outline-none focus:border-brand-500">
+                    <input v-model.number="form.amount" type="number" required placeholder="Monto" class="w-full p-3 border rounded-lg focus:outline-none focus:border-brand-500">
                     <input v-model="form.description" type="text" required placeholder="Descripción" class="w-full p-3 border rounded-lg focus:outline-none focus:border-brand-500">
                     <div class="grid grid-cols-2 gap-4">
                         <div><label class="text-xs text-gray-500">Categoría</label><select v-model="form.category" class="w-full p-2 border rounded-lg bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear Nueva</option></select></div>
                         <div><label class="text-xs text-gray-500">Cuenta</label><select v-model="form.account" class="w-full p-2 border rounded-lg bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear Nueva</option></select></div>
                     </div>
-                    <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nombre categoría..." class="w-full p-2 border rounded-lg">
-                    <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nombre cuenta..." class="w-full p-2 border rounded-lg">
+                    <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nueva categoría..." class="w-full p-2 border border-brand-300 bg-brand-50 rounded-lg">
+                    <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nueva cuenta..." class="w-full p-2 border border-blue-300 bg-blue-50 rounded-lg">
                     <input v-model="form.date" type="date" required class="w-full p-3 border rounded-lg">
                     <button type="submit" :disabled="isSubmitting" class="w-full bg-brand-600 text-white py-3 rounded-lg font-bold hover:bg-brand-700 transition disabled:opacity-50">{{ isSubmitting ? 'Guardando...' : 'Guardar Movimiento' }}</button>
                 </form>
@@ -207,9 +207,7 @@
     </div>
 
     <script>
-        // ==========================================================
-        // CONFIGURACIÓN DE FIREBASE (Tus datos reales)
-        // ==========================================================
+        // CONFIGURACIÓN DE FIREBASE (Datos verificados de tu imagen)
         const firebaseConfig = {
             apiKey: "AIzaSyDhRNMv23s-v0BPcozOJL5Zjl_j06akf_A",
             authDomain: "de-grano-en-grano-b8882.firebaseapp.com",
@@ -219,13 +217,10 @@
             appId: "1:202908727294:web:0a1c05938ed208135db2af",
             measurementId: "G-CYXL4GEYTC"
         };
-
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
-        // ==========================================================
 
         const { createApp, ref, computed, onMounted, watch, nextTick } = Vue;
 
@@ -233,7 +228,8 @@
             setup() {
                 const currentView = ref('dashboard');
                 const user = ref(null); 
-                const isLoading = ref(false);
+                const isLoading = ref(true);
+                const loadingMessage = ref("Cargando...");
                 const isModalOpen = ref(false);
                 const isGoalModalOpen = ref(false);
                 const isSubmitting = ref(false); 
@@ -244,11 +240,13 @@
                 // Datos
                 const newCategoryName = ref(''); const newAccountName = ref('');
                 const transactions = ref([]); const goals = ref([]);
-                const categories = ref(['Alimentación', 'Vivienda', 'Transporte', 'Entretenimiento', 'Salud', 'Salario', 'Inversión']);
-                const accounts = ref(['Efectivo', 'Bancolombia', 'Nu', 'Nequi', 'Binance', 'PiBank']); 
+                
+                // DEFAULTS LIMPIOS (Solo Efectivo, lo demás es del usuario)
+                const categories = ref(['Alimentación', 'Vivienda', 'Transporte', 'Entretenimiento', 'Salud', 'Ingresos', 'Inversión']);
+                const accounts = ref(['Efectivo']); 
 
-                const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Nu', date: new Date().toISOString().split('T')[0] });
-                const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Nu', apy: 13, monthlyContribution: 0 });
+                const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
+                const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
                 // UTILS
                 const openModal = () => { isSubmitting.value = false; isModalOpen.value = true; };
@@ -270,36 +268,51 @@
                     document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
 
-                // --- SISTEMA HÍBRIDO (NUBE + LOCAL) ---
+                // --- SISTEMA INTELIGENTE DE DATOS ---
                 const initData = async () => {
+                    // 1. Cargar LocalStorage INMEDIATAMENTE (Velocidad)
+                    loadLocal();
+                    
+                    // 2. Escuchar cambios de Auth (Segundo plano)
                     auth.onAuthStateChanged(async (u) => {
+                        user.value = u;
                         if (u) {
-                            user.value = u;
-                            isLoading.value = true;
-                            // Intentar cargar de nube
+                            loadingMessage.value = "Sincronizando nube...";
+                            // Intentar fusionar nube con local
                             try {
                                 const doc = await db.collection('users').doc(u.uid).get();
                                 if (doc.exists) {
                                     const data = doc.data();
-                                    // Fusionar o sobreescribir
-                                    if(data.transactions) transactions.value = data.transactions;
+                                    // Fusión simple: Si hay datos en nube, los tomamos.
+                                    // MEJORA: Podríamos fusionar arrays, pero por simplicidad priorizamos nube si existe.
+                                    if(data.transactions && data.transactions.length > 0) transactions.value = data.transactions;
                                     if(data.goals) goals.value = data.goals;
-                                    if(data.categories) categories.value = data.categories;
-                                    if(data.accounts) accounts.value = data.accounts;
+                                    
+                                    // Fusión de categorías y cuentas (Set para evitar duplicados)
+                                    const cloudCats = data.categories || [];
+                                    const localCats = categories.value;
+                                    categories.value = [...new Set([...localCats, ...cloudCats])];
+
+                                    const cloudAccs = data.accounts || [];
+                                    const localAccs = accounts.value;
+                                    accounts.value = [...new Set([...localAccs, ...cloudAccs])];
+                                    
+                                    // Actualizar LocalStorage con lo nuevo de la nube
+                                    saveDataLocal(); 
                                 } else {
-                                    // Si es usuario nuevo en nube, subir lo local
-                                    await saveData();
+                                    // Usuario nuevo en nube: Subir lo local actual
+                                    await saveDataCloud();
                                 }
                             } catch (error) {
-                                console.error("Error cargando nube:", error);
+                                console.error("Error sync:", error);
                             }
-                            isLoading.value = false;
-                        } else {
-                            // Cargar local si no hay usuario
-                            loadLocal();
                         }
+                        isLoading.value = false;
                         renderCharts();
                     });
+                    
+                    // Si no hay usuario en 1 seg, quitar loading
+                    setTimeout(() => { if(!user.value) isLoading.value = false; }, 1000);
                 };
 
                 const loadLocal = () => {
@@ -311,16 +324,17 @@
                     if (g) goals.value = JSON.parse(g);
                     if (c) categories.value = JSON.parse(c);
                     if (a) accounts.value = JSON.parse(a);
+                    renderCharts();
                 };
 
-                const saveData = async () => {
-                    // 1. Guardar Local
+                const saveDataLocal = () => {
                     localStorage.setItem('dgg_transactions', JSON.stringify(transactions.value));
                     localStorage.setItem('dgg_goals', JSON.stringify(goals.value));
                     localStorage.setItem('dgg_categories', JSON.stringify(categories.value));
                     localStorage.setItem('dgg_accounts', JSON.stringify(accounts.value));
+                };
 
-                    // 2. Guardar Nube (si está logueado)
+                const saveDataCloud = async () => {
                     if (user.value) {
                         try {
                             await db.collection('users').doc(user.value.uid).set({
@@ -330,17 +344,25 @@
                                 accounts: accounts.value,
                                 lastUpdate: new Date().toISOString()
                             });
-                        } catch (e) { console.error("Error guardando en nube", e); }
+                        } catch (e) { console.error("Error nube", e); }
                     }
+                };
+
+                const saveData = async () => {
+                    saveDataLocal(); // Siempre guardar local
+                    await saveDataCloud(); // Intentar guardar nube
                 };
 
                 // AUTH
                 const login = async () => {
-                    try { await auth.signInWithPopup(provider); } catch (e) { alert("Error al entrar: " + e.message); }
+                    try { await auth.signInWithPopup(provider); } catch (e) { alert("Error: " + e.message); }
                 };
                 const logout = async () => {
                     await auth.signOut();
                     user.value = null;
+                    // Limpiar datos en memoria para evitar ver datos de otro
+                    transactions.value = []; goals.value = [];
+                    // Recargar página para limpiar estado completo
                     window.location.reload();
                 };
 
@@ -350,16 +372,19 @@
                     try {
                         if (form.value.category === 'new') { if (newCategoryName.value.trim()) { categories.value.push(newCategoryName.value); form.value.category = newCategoryName.value; } else throw new Error("Falta nombre categoría"); }
                         if (form.value.account === 'new') { if (newAccountName.value.trim()) { accounts.value.push(newAccountName.value); form.value.account = newAccountName.value; } else throw new Error("Falta nombre cuenta"); }
+                        
                         transactions.value.push({ id: Date.now(), ...form.value });
-                        await saveData();
+                        
+                        await saveData(); // Guarda en ambos lados
+                        
                         await new Promise(r => setTimeout(r, 400));
-                        form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Nu', date: new Date().toISOString().split('T')[0] };
+                        form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] };
                         newCategoryName.value = ''; newAccountName.value = '';
                         closeModal(); updateCharts();
                     } catch (e) { alert(e.message); } finally { isSubmitting.value = false; }
                 };
                 const deleteTransaction = async (id) => { if(confirm('¿Borrar?')) { transactions.value = transactions.value.filter(t => t.id !== id); await saveData(); updateCharts(); }};
-                const addGoal = async () => { goals.value.push({ id: Date.now(), ...goalForm.value }); await saveData(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Nu', apy: 13, monthlyContribution: 0 }; };
+                const addGoal = async () => { goals.value.push({ id: Date.now(), ...goalForm.value }); await saveData(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 }; };
                 const deleteGoal = async (id) => { if(confirm('¿Borrar meta?')) { goals.value = goals.value.filter(g => g.id !== id); await saveData(); }};
                 
                 const getTotalGoalBalance = (goal) => {
@@ -373,7 +398,7 @@
                     try { return Math.ceil(Math.log((FV * r + futureContribution) / (PV * r + futureContribution)) / Math.log(1 + r)); } catch (e) { return "Err"; }
                 };
 
-                // COMPUTADOS Y GRÁFICOS
+                // COMPUTADOS
                 const getTransactionsByMonth = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(month) - 1) && d.getFullYear() === parseInt(year); }); };
                 const totalBalance = computed(() => transactions.value.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0));
                 const monthlyIncome = computed(() => getTransactionsByMonth().filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0));
@@ -396,7 +421,7 @@
                 watch(currentView, (v) => { if(v==='dashboard') renderCharts(); });
                 onMounted(() => { initData(); renderCharts(); });
 
-                return { currentView, user, isLoading, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, formatCurrency, formatDate, formatMonthYear, navClass, exportToCSV, updateCharts, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection, login, logout };
+                return { currentView, user, isLoading, loadingMessage, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, formatCurrency, formatDate, formatMonthYear, navClass, exportToCSV, updateCharts, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection, login, logout };
             }
         }).mount('#app');
     </script>
