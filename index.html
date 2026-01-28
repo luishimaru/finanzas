@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>De Grano en Grano - V9 Cloud</title>
+    <title>De Grano en Grano - V9 Estricta</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,34 +21,36 @@
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #f9fafb; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
 <body class="text-gray-800 h-screen flex overflow-hidden">
 
     <div id="app" class="flex w-full h-full relative">
         
-        <div v-if="isLoading" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center">
+        <div v-if="appState === 'loading'" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-500 mb-4"></div>
             <p class="text-gray-500 font-medium animate-pulse">{{ loadingMessage }}</p>
         </div>
 
-        <div v-if="!user && !isLoading" class="absolute inset-0 z-50 bg-gray-50 flex items-center justify-center p-4">
-            <div class="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full">
-                <div class="mb-6 inline-block p-4 bg-brand-50 rounded-full text-brand-600 text-4xl">
+        <div v-else-if="appState === 'login'" class="absolute inset-0 z-50 bg-gray-50 flex items-center justify-center p-4">
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full border border-gray-100">
+                <div class="mb-6 inline-block p-4 bg-brand-50 rounded-full text-brand-600 text-4xl shadow-inner">
                     <i class="fa-solid fa-leaf"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">De Grano en Grano</h1>
-                <p class="text-gray-500 mb-8">Tu gestor financiero personal en la nube.</p>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Bienvenido</h1>
+                <p class="text-gray-500 mb-8 text-sm">Gestiona tus finanzas de forma segura en la nube.</p>
                 
-                <button @click="login" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 hover:shadow-md transition flex items-center justify-center gap-3">
+                <button @click="login" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 hover:shadow-md transition flex items-center justify-center gap-3 active:scale-95 duration-150">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6">
                     Iniciar con Google
                 </button>
-                <p class="text-xs text-gray-400 mt-6">Tus datos se guardan de forma segura y privada.</p>
             </div>
         </div>
 
-        <template v-if="user">
+        <template v-else-if="appState === 'ready'">
             <aside class="w-20 md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-20">
                 <div>
                     <div class="h-16 flex items-center justify-center md:justify-start md:px-6 border-b border-gray-100">
@@ -63,9 +65,11 @@
                 </div>
                 
                 <div class="p-4 border-t border-gray-100 text-center">
-                    <img :src="user.photoURL" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-brand-500">
-                    <p class="text-xs font-bold text-gray-700 truncate">{{ user.displayName }}</p>
-                    <button @click="logout" class="text-xs text-red-500 hover:underline mt-1 bg-red-50 px-3 py-1 rounded-full">Cerrar Sesión</button>
+                    <img v-if="user" :src="user.photoURL" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-brand-500">
+                    <p v-if="user" class="text-xs font-bold text-gray-700 truncate">{{ user.displayName }}</p>
+                    <button @click="logout" class="text-xs text-red-500 hover:underline mt-2 bg-red-50 px-3 py-1 rounded-full w-full">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir
+                    </button>
                 </div>
             </aside>
 
@@ -75,9 +79,9 @@
                     <header class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-800">Panel de Control</h1>
-                            <p class="text-sm text-gray-500">Mes: <strong>{{ formatMonthYear(selectedDate) }}</strong></p>
+                            <p class="text-sm text-gray-500">Viendo: <strong>{{ formatMonthYear(selectedDate) }}</strong></p>
                         </div>
-                        <input type="month" v-model="selectedDate" class="border border-gray-300 rounded-lg px-4 py-2 bg-white shadow-sm cursor-pointer">
+                        <input type="month" v-model="selectedDate" @change="updateCharts" class="border border-gray-300 rounded-lg px-4 py-2 bg-white shadow-sm cursor-pointer">
                     </header>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -86,29 +90,29 @@
                             <div class="text-3xl font-bold text-gray-900">{{ formatCurrency(totalBalance) }}</div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-green-600 font-medium block mb-2">Ingresos</span>
+                            <span class="text-green-600 font-medium block mb-2">Ingresos (Mes)</span>
                             <div class="text-2xl font-bold text-gray-800">+{{ formatCurrency(monthlyIncome) }}</div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-red-500 font-medium block mb-2">Gastos</span>
+                            <span class="text-red-500 font-medium block mb-2">Gastos (Mes)</span>
                             <div class="text-2xl font-bold text-gray-800">-{{ formatCurrency(monthlyExpense) }}</div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <span class="text-brand-600 font-medium block mb-2">Inversión</span>
+                            <span class="text-brand-600 font-medium block mb-2">Inversión (Mes)</span>
                             <div class="text-2xl font-bold text-gray-800">{{ formatCurrency(monthlyInvestment) }}</div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-1">
-                            <h3 class="font-bold text-gray-700 mb-4">Gastos por Categoría</h3>
+                            <h3 class="font-bold text-gray-700 mb-4">Gastos este Mes</h3>
                             <div class="relative h-64 w-full flex items-center justify-center">
                                 <canvas id="categoryChart"></canvas>
                                 <p v-if="monthlyExpense === 0" class="absolute text-gray-400 text-sm">Sin gastos este mes</p>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-2">
-                            <h3 class="font-bold text-gray-700 mb-4">Historial Semestral</h3>
+                            <h3 class="font-bold text-gray-700 mb-4">Historial 6 Meses</h3>
                             <div class="relative h-64 w-full"><canvas id="historyChart"></canvas></div>
                         </div>
                     </div>
@@ -224,7 +228,7 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN FIREBASE (Tus datos) ---
+        // CONFIGURACIÓN FIREBASE (Tus datos)
         const firebaseConfig = {
             apiKey: "AIzaSyDhRNMv23s-v0BPcozOJL5Zjl_j06akf_A",
             authDomain: "de-grano-en-grano-b8882.firebaseapp.com",
@@ -243,9 +247,11 @@
 
         createApp({
             setup() {
+                // ESTADO DE LA APP: 'loading' | 'login' | 'ready'
+                const appState = ref('loading'); 
+                const loadingMessage = ref('Conectando con el servidor...');
+                
                 const user = ref(null);
-                const isLoading = ref(true);
-                const loadingMessage = ref("Iniciando...");
                 const currentView = ref('dashboard');
                 const isModalOpen = ref(false);
                 const isGoalModalOpen = ref(false);
@@ -262,18 +268,23 @@
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
                 const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
-                // --- AUTH & DATA LOADING ---
+                // --- GESTIÓN DE ESTADO Y CARGA ---
                 onMounted(() => {
                     auth.onAuthStateChanged(async (u) => {
                         if (u) {
+                            // Usuario detectado -> Cargar datos
                             user.value = u;
-                            loadingMessage.value = "Descargando tus datos...";
+                            loadingMessage.value = "Descargando tus finanzas...";
                             await loadUserData(u.uid);
+                            appState.value = 'ready'; // Abrir la App
+                            nextTick(() => renderCharts()); // Dibujar gráficos
                         } else {
+                            // Sin usuario -> Mostrar Login
                             user.value = null;
-                            transactions.value = []; goals.value = []; // Limpiar todo al salir
+                            transactions.value = []; 
+                            goals.value = [];
+                            appState.value = 'login';
                         }
-                        isLoading.value = false;
                     });
                 });
 
@@ -284,14 +295,12 @@
                             const data = doc.data();
                             transactions.value = data.transactions || [];
                             goals.value = data.goals || [];
-                            // Fusión segura de categorías
                             if(data.categories) categories.value = [...new Set([...categories.value, ...data.categories])];
                             if(data.accounts) accounts.value = [...new Set([...accounts.value, ...data.accounts])];
                         }
-                        renderCharts();
                     } catch (e) {
                         console.error("Error cargando:", e);
-                        alert("Error de conexión. Intenta recargar.");
+                        alert("Error de conexión. Recarga la página.");
                     }
                 };
 
@@ -306,112 +315,77 @@
                             lastUpdate: new Date().toISOString()
                         });
                     } catch (e) {
-                        console.error("Error guardando:", e);
-                        alert("No se pudo guardar en la nube. Verifica tu conexión.");
+                        alert("Error guardando en la nube: " + e.message);
                     }
                 };
 
                 const login = async () => {
                     try { await auth.signInWithPopup(provider); } 
-                    catch (e) { alert("No se pudo iniciar sesión: " + e.message); }
+                    catch (e) { alert("No se pudo entrar: " + e.message); }
                 };
 
                 const logout = async () => {
-                    isLoading.value = true;
+                    appState.value = 'loading'; // Mostrar carga mientras sale
+                    loadingMessage.value = "Cerrando sesión...";
                     await auth.signOut();
-                    window.location.reload(); // Recarga forzosa para limpiar memoria
+                    window.location.reload(); // Limpieza total de memoria
                 };
 
-                // --- NEGOCIO ---
+                // --- NEGOCIO (Idéntico a V8 pero seguro) ---
                 const addTransaction = async () => {
-                    if (isSubmitting.value) return;
-                    isSubmitting.value = true;
+                    if (isSubmitting.value) return; isSubmitting.value = true;
                     try {
-                        // Lógica de Nuevos Valores
                         if (form.value.category === 'new') {
                             const name = newCategoryName.value.trim();
-                            if (name) { 
-                                categories.value.push(name); 
-                                form.value.category = name; 
-                            } else throw new Error("Escribe un nombre para la categoría.");
+                            if (name) { categories.value.push(name); form.value.category = name; } else throw new Error("Falta nombre categoría");
                         }
                         if (form.value.account === 'new') {
                             const name = newAccountName.value.trim();
-                            if (name) { 
-                                accounts.value.push(name); 
-                                form.value.account = name; 
-                            } else throw new Error("Escribe un nombre para la cuenta.");
+                            if (name) { accounts.value.push(name); form.value.account = name; } else throw new Error("Falta nombre cuenta");
                         }
-
                         transactions.value.push({ id: Date.now(), ...form.value });
                         await saveToCloud();
-                        
-                        // Reset y Cierre
                         form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] };
                         newCategoryName.value = ''; newAccountName.value = '';
-                        closeModal();
-                        updateCharts();
-                    } catch (e) {
-                        alert(e.message);
-                    } finally {
-                        isSubmitting.value = false;
-                    }
+                        closeModal(); updateCharts();
+                    } catch (e) { alert(e.message); } finally { isSubmitting.value = false; }
                 };
 
                 const deleteTransaction = async (id) => {
-                    if(confirm("¿Eliminar este movimiento?")) {
-                        transactions.value = transactions.value.filter(t => t.id !== id);
-                        await saveToCloud();
-                        updateCharts();
-                    }
+                    if(confirm("¿Eliminar?")) { transactions.value = transactions.value.filter(t => t.id !== id); await saveToCloud(); updateCharts(); }
                 };
 
                 const addGoal = async () => {
-                    goals.value.push({ id: Date.now(), ...goalForm.value });
-                    await saveToCloud();
-                    closeGoalModal();
-                    goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 };
+                    goals.value.push({ id: Date.now(), ...goalForm.value }); await saveToCloud(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 };
                 };
 
                 const deleteGoal = async (id) => {
-                    if(confirm("¿Eliminar meta?")) {
-                        goals.value = goals.value.filter(g => g.id !== id);
-                        await saveToCloud();
-                    }
+                    if(confirm("¿Eliminar meta?")) { goals.value = goals.value.filter(g => g.id !== id); await saveToCloud(); }
                 };
 
                 // --- UTILS & CHARTS ---
-                // (Misma lógica de V8 pero dentro del scope seguro)
-                const formatCurrency = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
-                const formatDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-                const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
-                const navClass = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-r-4 border-brand-500 w-full" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-900 w-full";
-                
                 const openModal = () => { isSubmitting.value = false; isModalOpen.value = true; };
                 const closeModal = () => isModalOpen.value = false;
                 const openGoalModal = () => isGoalModalOpen.value = true;
                 const closeGoalModal = () => isGoalModalOpen.value = false;
+                const formatCurrency = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
+                const formatDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
+                const navClass = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-r-4 border-brand-500 w-full" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-900 w-full";
 
                 const exportToCSV = () => {
                     const headers = ["Fecha", "Tipo", "Categoria", "Cuenta", "Descripcion", "Monto"];
                     const rows = transactions.value.map(t => [t.date, t.type, t.category, t.account, `"${t.description}"`, t.amount]);
                     const csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
-                    const link = document.createElement("a");
-                    link.setAttribute("href", encodeURI(csvContent));
-                    link.setAttribute("download", `finanzas_backup_${new Date().toISOString().slice(0,10)}.csv`);
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `finanzas_backup.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
 
-                // COMPUTADOS (Con filtro de fecha)
                 const getTransactionsByMonth = () => {
                     if(!selectedDate.value) return [];
                     const [y, m] = selectedDate.value.split('-');
-                    return transactions.value.filter(t => {
-                        const d = new Date(t.date + 'T00:00:00');
-                        return d.getMonth() === (parseInt(month) - 1) && d.getFullYear() === parseInt(year);
-                    });
+                    return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(month) - 1) && d.getFullYear() === parseInt(year); });
                 };
-                // Fix filtro fecha (variable rename)
+                // Fix filtro fecha (reutilizando lógica segura)
                 const getFiltered = () => {
                     if(!selectedDate.value) return [];
                     const [y, m] = selectedDate.value.split('-');
@@ -419,34 +393,17 @@
                         const d = new Date(t.date + 'T00:00:00');
                         return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y);
                     });
-                }
+                };
 
                 const totalBalance = computed(() => transactions.value.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0));
                 const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0));
                 const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0));
                 const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + t.amount, 0));
-                
-                const filteredTransactions = computed(() => {
-                    let txs = transactions.value;
-                    if (searchTerm.value) {
-                        const term = searchTerm.value.toLowerCase();
-                        txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term));
-                    }
-                    return txs.sort((a,b) => new Date(b.date) - new Date(a.date));
-                });
+                const filteredTransactions = computed(() => { let txs = transactions.value; if (searchTerm.value) { const term = searchTerm.value.toLowerCase(); txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); } return txs.sort((a,b) => new Date(b.date) - new Date(a.date)); });
 
-                const getTotalGoalBalance = (goal) => {
-                    const investments = transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + t.amount, 0);
-                    return (goal.initialAmount || 0) + investments;
-                };
-                const calculateDynamicProjection = (goal) => {
-                    const currentTotal = getTotalGoalBalance(goal); const futureContribution = goal.monthlyContribution;
-                    if (currentTotal >= goal.targetAmount) return 0; if (futureContribution <= 0) return "∞";
-                    const r = (goal.apy / 100) / 12; const PV = currentTotal; const FV = goal.targetAmount;
-                    try { return Math.ceil(Math.log((FV * r + futureContribution) / (PV * r + futureContribution)) / Math.log(1 + r)); } catch (e) { return "Err"; }
-                };
+                const getTotalGoalBalance = (goal) => { const inv = transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + t.amount, 0); return (goal.initialAmount || 0) + inv; };
+                const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
 
-                // CHART JS
                 let chartCat = null, chartHist = null;
                 const renderCharts = async () => {
                     await nextTick();
@@ -454,8 +411,7 @@
                     if (!ctxCat || !ctxHist) return;
                     if (chartCat) chartCat.destroy(); if (chartHist) chartHist.destroy();
 
-                    const cats = {}; 
-                    getFiltered().filter(t => t.type === 'expense').forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
+                    const cats = {}; getFiltered().filter(t => t.type === 'expense').forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
                     chartCat = new Chart(ctxCat, { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#22c55e','#14b8a6','#f59e0b','#ef4444','#6366f1','#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
 
                     const months = {}; 
@@ -467,14 +423,7 @@
                 watch(currentView, (v) => { if(v==='dashboard') renderCharts(); });
                 watch(selectedDate, () => updateCharts());
 
-                return { 
-                    user, isLoading, loadingMessage, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, 
-                    transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName,
-                    totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions,
-                    addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, 
-                    formatCurrency, formatDate, formatMonthYear, navClass, exportToCSV, updateCharts,
-                    openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection
-                };
+                return { appState, loadingMessage, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, formatMonthYear, navClass, exportToCSV, updateCharts, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection };
             }
         }).mount('#app');
     </script>
