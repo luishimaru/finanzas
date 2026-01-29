@@ -236,11 +236,9 @@
                 <button @click="currentView = 'dashboard'" :class="navClassMobile('dashboard')">
                     <i class="fa-solid fa-chart-pie text-xl mb-0.5"></i><span class="text-[10px] font-medium">Inicio</span>
                 </button>
-
                 <button @click="currentView = 'transactions'" :class="navClassMobile('transactions')">
                     <i class="fa-solid fa-list-ul text-xl mb-0.5"></i><span class="text-[10px] font-medium">Diario</span>
                 </button>
-
                 <div class="w-12"></div> <button @click="currentView = 'goals'" :class="navClassMobile('goals')">
                     <i class="fa-solid fa-bullseye text-xl mb-0.5"></i><span class="text-[10px] font-medium">Metas</span>
                 </button>
@@ -345,8 +343,6 @@
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
                 const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
-                const isMobile = window.innerWidth < 768;
-
                 onMounted(() => {
                     auth.onAuthStateChanged(async (u) => {
                         if (u) { user.value = u; await loadUserData(u.uid); appState.value = 'ready'; nextTick(() => renderCharts()); } 
@@ -426,6 +422,7 @@
                 const getMotivationMessage = (months) => { if(months === 0) return "¡Logrado! 🎉"; if(months <= 3) return "¡Recta final! 🏁"; if(months <= 12) return "¡Vamos! 🚀"; return "Constancia 🌱"; };
 
                 let chartCat = null, chartHist = null;
+                
                 const renderCharts = async () => {
                     await nextTick();
                     const ctxCat = document.getElementById('categoryChart');
@@ -469,6 +466,9 @@
                     const labels = Object.keys(months).sort().slice(-6);
                     chartHist = new Chart(ctxHist, { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#2e7d32', borderRadius: 4 }, { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#c62828', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false, grid: { display: false } }, y: { grid: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10, family: 'Montserrat' } } } } } });
                 };
+
+                // SOLUCIÓN AL ERROR: Definimos updateCharts correctamente
+                const updateCharts = () => { if (currentView.value === 'dashboard') setTimeout(renderCharts, 200); };
 
                 watch(currentView, (v) => { if(v==='dashboard') setTimeout(renderCharts, 100); });
                 watch(selectedDate, () => setTimeout(renderCharts, 100));
