@@ -32,7 +32,7 @@
                             600: '#1b5e20', // Verde Oscuro
                             700: '#14532d',
                             cream: '#fcfbf7', // Fondo Web
-                            gold: '#d4af37'   // Acento dorado (opcional)
+                            gold: '#d4af37'   // Acento dorado
                         } 
                     } 
                 } 
@@ -43,11 +43,7 @@
         .fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
         body { font-family: 'Montserrat', sans-serif; background-color: #fcfbf7; }
-        
-        /* Gradiente Corporativo */
-        .bg-gradient-dgg {
-            background: linear-gradient(135deg, #2e7d32 0%, #14532d 100%);
-        }
+        .bg-gradient-dgg { background: linear-gradient(135deg, #2e7d32 0%, #14532d 100%); }
     </style>
 </head>
 <body class="text-gray-800 h-screen flex overflow-hidden bg-brand-cream">
@@ -56,53 +52,37 @@
         
         <div v-if="appState === 'loading'" class="fixed inset-0 z-[100] bg-brand-cream flex flex-col items-center justify-center">
             <img src="logo.png" class="w-24 h-24 mb-6 animate-pulse" alt="Cargando...">
-            <p class="text-brand-600 font-semibold tracking-widest text-sm">CARGANDO ENTORNO SEGURO...</p>
+            <p class="text-brand-600 font-semibold tracking-widest text-sm">CARGANDO...</p>
         </div>
 
         <div v-else-if="appState === 'login'" class="absolute inset-0 z-50 flex flex-col lg:flex-row">
-            
             <div class="w-full lg:w-5/12 bg-gradient-dgg flex flex-col justify-center items-center p-12 text-white relative overflow-hidden">
                 <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
-                
                 <div class="z-10 text-center max-w-md">
                     <img src="logo.png" class="w-32 h-32 mx-auto mb-8 drop-shadow-xl bg-white/10 rounded-full p-4 backdrop-blur-sm" alt="Logo DGG">
-                    
-                    <h1 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">
-                        Construye tu <br/>Patrimonio Sólido
-                    </h1>
-                    
-                    <p class="text-lg md:text-xl font-light opacity-90 mb-10 leading-relaxed">
-                        Deja de perder dinero. Registra, visualiza y optimiza tus finanzas personales en la nube.
-                    </p>
-
+                    <h1 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">Construye tu <br/>Patrimonio Sólido</h1>
+                    <p class="text-lg md:text-xl font-light opacity-90 mb-10 leading-relaxed">Deja de perder dinero. Registra, visualiza y optimiza tus finanzas personales en la nube.</p>
                     <div class="flex flex-col gap-4 text-sm font-medium opacity-80 text-left w-fit mx-auto">
                         <div class="flex items-center gap-3"><i class="fa-solid fa-check text-brand-100"></i> Acceso desde cualquier dispositivo</div>
                         <div class="flex items-center gap-3"><i class="fa-solid fa-check text-brand-100"></i> Sin contraseñas que olvidar</div>
                         <div class="flex items-center gap-3"><i class="fa-solid fa-check text-brand-100"></i> 100% Privado y Seguro</div>
                     </div>
                 </div>
-                
                 <div class="absolute bottom-6 text-[10px] opacity-50 text-center px-8">
                     Al ingresar, aceptas nuestra <a href="https://degranoengrano.com/about/privacy-policy/" target="_blank" class="underline hover:text-white">Política de Privacidad</a>.
                 </div>
             </div>
-
             <div class="w-full lg:w-7/12 bg-brand-cream flex items-center justify-center p-8">
                 <div class="w-full max-w-sm">
                     <div class="bg-white p-10 rounded-3xl shadow-xl border border-gray-100 text-center">
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Bienvenido al Gestor</h2>
                         <p class="text-gray-500 mb-8 text-sm">Tu centro de control financiero.</p>
-                        
                         <button @click="login" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-4 px-6 rounded-xl hover:bg-gray-50 hover:border-brand-500 hover:text-brand-600 transition-all duration-300 flex items-center justify-center gap-4 group shadow-sm">
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 group-hover:scale-110 transition-transform">
                             <span>Iniciar Sesión con Google</span>
                         </button>
-                        
                         <div class="mt-8 pt-6 border-t border-gray-100">
-                            <p class="text-xs text-gray-400">
-                                Una herramienta oficial de <br>
-                                <strong class="text-brand-600">De Grano en Grano</strong>
-                            </p>
+                            <p class="text-xs text-gray-400">Una herramienta oficial de <br><strong class="text-brand-600">De Grano en Grano</strong></p>
                         </div>
                     </div>
                 </div>
@@ -114,9 +94,7 @@
                 <div>
                     <div class="h-24 flex items-center justify-center md:justify-start md:px-6 border-b border-gray-100">
                         <img src="logo.png" class="w-10 h-10 mr-0 md:mr-3" alt="Logo">
-                        <div class="hidden md:block">
-                            <h1 class="font-bold text-brand-700 text-sm leading-tight tracking-wide">GESTOR DE<br>PATRIMONIO</h1>
-                        </div>
+                        <div class="hidden md:block"><h1 class="font-bold text-brand-700 text-sm leading-tight tracking-wide">GESTOR DE<br>PATRIMONIO</h1></div>
                     </div>
                     <nav class="mt-8 flex flex-col gap-2 px-3 md:px-4">
                         <button @click="currentView = 'dashboard'" :class="navClass('dashboard')"><i class="fa-solid fa-chart-pie w-5 text-center"></i><span class="hidden md:block">Resumen</span></button>
@@ -124,14 +102,11 @@
                         <button @click="currentView = 'goals'" :class="navClass('goals')"><i class="fa-solid fa-bullseye w-5 text-center"></i><span class="hidden md:block">Metas</span></button>
                     </nav>
                 </div>
-                
                 <div class="p-6 border-t border-gray-100 bg-gray-50/50">
                     <div v-if="user" class="flex flex-col items-center text-center">
                         <img :src="user.photoURL" class="w-12 h-12 rounded-full mb-3 border-2 border-brand-200 shadow-sm p-0.5 bg-white">
                         <p class="text-xs font-bold text-gray-700 truncate w-full mb-3">{{ user.displayName }}</p>
-                        <button @click="logout" class="text-[10px] font-bold text-red-500 hover:bg-red-50 px-4 py-2 rounded-full transition w-full border border-transparent hover:border-red-100">
-                            CERRAR SESIÓN
-                        </button>
+                        <button @click="logout" class="text-[10px] font-bold text-red-500 hover:bg-red-50 px-4 py-2 rounded-full transition w-full border border-transparent hover:border-red-100">CERRAR SESIÓN</button>
                     </div>
                 </div>
             </aside>
@@ -246,7 +221,7 @@
 
             <div v-if="isModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
                 <div class="absolute inset-0 bg-brand-900/60 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
-                <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden transform transition-all scale-100">
+                <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden">
                     <div class="bg-white px-8 pt-8 pb-4 flex justify-between items-center">
                         <h3 class="font-bold text-xl text-gray-800">Registrar Movimiento</h3>
                         <button @click="closeModal" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-500 transition"><i class="fa-solid fa-xmark"></i></button>
@@ -296,7 +271,6 @@
     </div>
 
     <script>
-        // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDhRNMv23s-v0BPcozOJL5Zjl_j06akf_A",
             authDomain: "de-grano-en-grano-b8882.firebaseapp.com",
@@ -316,53 +290,124 @@
 
         createApp({
             setup() {
-                const appState = ref('loading'); const loadingMessage = ref('Iniciando...'); const user = ref(null); const currentView = ref('dashboard');
-                const isModalOpen = ref(false); const isGoalModalOpen = ref(false); const isSubmitting = ref(false); const searchTerm = ref('');
+                const appState = ref('loading'); 
+                const loadingMessage = ref('Iniciando...'); 
+                const user = ref(null); 
+                const currentView = ref('dashboard');
+                const isModalOpen = ref(false); 
+                const isGoalModalOpen = ref(false); 
+                const isSubmitting = ref(false); 
+                const searchTerm = ref('');
                 const selectedDate = ref(new Date().toISOString().slice(0, 7));
-                const newCategoryName = ref(''); const newAccountName = ref('');
-                const transactions = ref([]); const goals = ref([]);
+                
+                const newCategoryName = ref(''); 
+                const newAccountName = ref('');
+                
+                // Variables reactivas principales
+                const transactions = ref([]); 
+                const goals = ref([]);
                 const categories = ref(['Alimentación', 'Vivienda', 'Transporte', 'Entretenimiento', 'Salud', 'Salario', 'Inversión']);
                 const accounts = ref(['Efectivo']);
+                
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
                 const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
                 onMounted(() => {
                     auth.onAuthStateChanged(async (u) => {
-                        if (u) { user.value = u; loadingMessage.value = "Sincronizando..."; await loadUserData(u.uid); appState.value = 'ready'; nextTick(() => renderCharts()); } 
-                        else { user.value = null; transactions.value = []; goals.value = []; appState.value = 'login'; }
+                        if (u) { 
+                            user.value = u; 
+                            loadingMessage.value = "Sincronizando..."; 
+                            await loadUserData(u.uid); 
+                            appState.value = 'ready'; 
+                            nextTick(() => renderCharts()); 
+                        } else { 
+                            user.value = null; 
+                            transactions.value = []; 
+                            goals.value = []; 
+                            appState.value = 'login'; 
+                        }
                     });
                 });
 
                 const loadUserData = async (uid) => {
                     try {
                         const doc = await db.collection('users').doc(uid).get();
-                        if (doc.exists) { const d = doc.data(); transactions.value = d.transactions || []; goals.value = d.goals || []; if(d.categories) categories.value = [...new Set([...categories.value, ...d.categories])]; if(d.accounts) accounts.value = [...new Set([...accounts.value, ...d.accounts])]; }
+                        if (doc.exists) { 
+                            const d = doc.data(); 
+                            // Asegurarnos de que los montos sean números al cargar
+                            transactions.value = (d.transactions || []).map(t => ({...t, amount: Number(t.amount)}));
+                            goals.value = d.goals || []; 
+                            if(d.categories) categories.value = [...new Set([...categories.value, ...d.categories])]; 
+                            if(d.accounts) accounts.value = [...new Set([...accounts.value, ...d.accounts])]; 
+                        }
                     } catch (e) { console.error(e); }
                 };
-                const saveToCloud = async () => { if (user.value) await db.collection('users').doc(user.value.uid).set({ transactions: transactions.value, goals: goals.value, categories: categories.value, accounts: accounts.value, lastUpdate: new Date().toISOString() }); };
+
+                const saveToCloud = async () => { 
+                    if (user.value) {
+                        await db.collection('users').doc(user.value.uid).set({ 
+                            transactions: transactions.value, 
+                            goals: goals.value, 
+                            categories: categories.value, 
+                            accounts: accounts.value, 
+                            lastUpdate: new Date().toISOString() 
+                        }); 
+                    }
+                };
+
                 const login = async () => { try { await auth.signInWithPopup(provider); } catch (e) { alert(e.message); } };
                 const logout = async () => { appState.value = 'loading'; await auth.signOut(); window.location.reload(); };
 
                 const addTransaction = async () => {
-                    if (isSubmitting.value) return; isSubmitting.value = true;
+                    if (isSubmitting.value) return; 
+                    isSubmitting.value = true;
                     try {
                         if (form.value.category === 'new') { const n = newCategoryName.value.trim(); if(n){categories.value.push(n); form.value.category=n;} }
                         if (form.value.account === 'new') { const n = newAccountName.value.trim(); if(n){accounts.value.push(n); form.value.account=n;} }
-                        transactions.value.push({ id: Date.now(), ...form.value }); await saveToCloud();
-                        form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] }; newCategoryName.value = ''; newAccountName.value = '';
-                        closeModal(); updateCharts();
+                        
+                        // FORZAMOS QUE SEA NÚMERO
+                        const cleanAmount = Number(form.value.amount);
+                        
+                        transactions.value.push({ 
+                            id: Date.now(), 
+                            ...form.value,
+                            amount: cleanAmount // Guardamos número limpio
+                        }); 
+                        
+                        await saveToCloud();
+                        form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] }; 
+                        newCategoryName.value = ''; 
+                        newAccountName.value = '';
+                        closeModal(); 
+                        updateCharts();
                     } catch (e) { alert(e.message); } finally { isSubmitting.value = false; }
                 };
-                const deleteTransaction = async (id) => { if(confirm("¿Eliminar?")) { transactions.value = transactions.value.filter(t => t.id !== id); await saveToCloud(); updateCharts(); }};
+
+                const deleteTransaction = async (id) => { 
+                    if(confirm("¿Eliminar?")) { 
+                        // FILTRO REACTIVO: Esto elimina el elemento del array local y dispara el recálculo
+                        transactions.value = transactions.value.filter(t => t.id !== id); 
+                        await saveToCloud(); 
+                        updateCharts(); 
+                    }
+                };
+
                 const addGoal = async () => { goals.value.push({ id: Date.now(), ...goalForm.value }); await saveToCloud(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 }; };
                 const deleteGoal = async (id) => { if(confirm("¿Eliminar meta?")) { goals.value = goals.value.filter(g => g.id !== id); await saveToCloud(); }};
 
                 const openModal = () => { isSubmitting.value = false; isModalOpen.value = true; }; const closeModal = () => isModalOpen.value = false;
                 const openGoalModal = () => isGoalModalOpen.value = true; const closeGoalModal = () => isGoalModalOpen.value = false;
-                const formatCurrency = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
+                
+                const formatCurrency = (val) => {
+                    const numberVal = Number(val);
+                    if(isNaN(numberVal)) return "$0";
+                    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(numberVal);
+                };
+
                 const formatDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                 const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
                 const navClass = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-l-4 border-brand-500 w-full bg-white shadow-sm" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-white hover:text-gray-900 w-full transition";
+                
                 const exportToCSV = () => {
                     const headers = ["Fecha", "Tipo", "Categoria", "Cuenta", "Descripcion", "Monto"];
                     const rows = transactions.value.map(t => [t.date, t.type, t.category, t.account, `"${t.description}"`, t.amount]);
@@ -371,16 +416,19 @@
                 };
 
                 const getFiltered = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y); }); };
-                const totalBalance = computed(() => transactions.value.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0));
-                const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0));
-                const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0));
-                const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + t.amount, 0));
+                
+                // PROPIEDADES COMPUTADAS CORREGIDAS PARA SUMAR NÚMEROS
+                const totalBalance = computed(() => transactions.value.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0));
+                const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0));
+                const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0));
+                const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + Number(t.amount), 0));
+                
                 const filteredTransactions = computed(() => { let txs = transactions.value; if (searchTerm.value) { const term = searchTerm.value.toLowerCase(); txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); } return txs.sort((a,b) => new Date(b.date) - new Date(a.date)); });
-                const getTotalGoalBalance = (goal) => { return (goal.initialAmount || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + t.amount, 0); };
+                const getTotalGoalBalance = (goal) => { return (goal.initialAmount || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + Number(t.amount), 0); };
                 const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
 
                 let chartCat = null, chartHist = null;
-                // COPIA Y PEGA ESTE BLOQUE REEMPLAZANDO TU ANTIGUA FUNCIÓN 'renderCharts'
+                
                 const renderCharts = async () => {
                     await nextTick();
                     const ctxCat = document.getElementById('categoryChart');
@@ -388,22 +436,19 @@
                     
                     if (!ctxCat || !ctxHist) return;
 
-                    // Limpiar gráficos anteriores para evitar errores visuales
                     if (chartCat) chartCat.destroy();
                     if (chartHist) chartHist.destroy();
 
-                    // --- 1. GRÁFICO DE DONA (CATEGORÍAS) MEJORADO ---
+                    // 1. GRÁFICO DONA MEJORADO
                     const cats = {};
                     getFiltered().filter(t => t.type === 'expense').forEach(t => {
-                        cats[t.category] = (cats[t.category] || 0) + t.amount;
+                        cats[t.category] = (cats[t.category] || 0) + Number(t.amount);
                     });
 
-                    // Ordenar de mayor a menor gasto para que la lista se vea limpia
                     const sortedCatEntries = Object.entries(cats).sort((a, b) => b[1] - a[1]);
                     const sortedLabels = sortedCatEntries.map(e => e[0]);
                     const sortedData = sortedCatEntries.map(e => e[1]);
                     
-                    // Colores definidos para las categorías
                     const backgroundColors = ['#2e7d32', '#c62828', '#f9a825', '#1565c0', '#6a1b9a', '#00838f', '#ad1457', '#4e342e', '#37474f'];
 
                     chartCat = new Chart(ctxCat, {
@@ -427,7 +472,6 @@
                                         font: { family: 'Montserrat', size: 11 },
                                         boxWidth: 12,
                                         padding: 15,
-                                        // MAGIA AQUÍ: Genera el texto "Categoría: $Valor"
                                         generateLabels: (chart) => {
                                             const data = chart.data;
                                             if (data.labels.length && data.datasets.length) {
@@ -453,12 +497,12 @@
                         }
                     });
 
-                    // --- 2. GRÁFICO DE BARRAS (HISTÓRICO) ---
+                    // 2. GRÁFICO HISTÓRICO
                     const months = {}; 
                     transactions.value.forEach(t => { 
                         const k = t.date.substring(0, 7); 
                         if(!months[k]) months[k] = { inc: 0, exp: 0 }; 
-                        t.type === 'income' ? months[k].inc += t.amount : months[k].exp += t.amount; 
+                        t.type === 'income' ? months[k].inc += Number(t.amount) : months[k].exp += Number(t.amount); 
                     });
                     const labels = Object.keys(months).sort().slice(-6);
                     
@@ -479,6 +523,10 @@
                         } 
                     });
                 };
+
+                const updateCharts = () => { if (currentView.value === 'dashboard') renderCharts(); };
+                watch(currentView, (v) => { if(v==='dashboard') renderCharts(); });
+                watch(selectedDate, () => updateCharts());
 
                 return { appState, loadingMessage, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, formatMonthYear, navClass, exportToCSV, updateCharts, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection };
             }
