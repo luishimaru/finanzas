@@ -380,20 +380,105 @@
                 const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
 
                 let chartCat = null, chartHist = null;
+                // COPIA Y PEGA ESTE BLOQUE REEMPLAZANDO TU ANTIGUA FUNCIÓN 'renderCharts'
                 const renderCharts = async () => {
                     await nextTick();
-                    const ctxCat = document.getElementById('categoryChart'); const ctxHist = document.getElementById('historyChart');
+                    const ctxCat = document.getElementById('categoryChart');
+                    const ctxHist = document.getElementById('historyChart');
+                    
                     if (!ctxCat || !ctxHist) return;
-                    if (chartCat) chartCat.destroy(); if (chartHist) chartHist.destroy();
-                    const cats = {}; getFiltered().filter(t => t.type === 'expense').forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
-                    chartCat = new Chart(ctxCat, { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#2e7d32','#1b5e20','#f9a825','#c62828','#1565c0','#6a1b9a'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { family: 'Montserrat' } } } } } });
-                    const months = {}; transactions.value.forEach(t => { const k = t.date.substring(0, 7); if(!months[k]) months[k] = { inc: 0, exp: 0 }; t.type === 'income' ? months[k].inc += t.amount : months[k].exp += t.amount; });
+
+                    // Limpiar gráficos anteriores para evitar errores visuales
+                    if (chartCat) chartCat.destroy();
+                    if (chartHist) chartHist.destroy();
+
+                    // --- 1. GRÁFICO DE DONA (CATEGORÍAS) MEJORADO ---
+                    const cats = {};
+                    getFiltered().filter(t => t.type === 'expense').forEach(t => {
+                        cats[t.category] = (cats[t.category] || 0) + t.amount;
+                    });
+
+                    // Ordenar de mayor a menor gasto para que la lista se vea limpia
+                    const sortedCatEntries = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+                    const sortedLabels = sortedCatEntries.map(e => e[0]);
+                    const sortedData = sortedCatEntries.map(e => e[1]);
+                    
+                    // Colores definidos para las categorías
+                    const backgroundColors = ['#2e7d32', '#c62828', '#f9a825', '#1565c0', '#6a1b9a', '#00838f', '#ad1457', '#4e342e', '#37474f'];
+
+                    chartCat = new Chart(ctxCat, {
+                        type: 'doughnut',
+                        data: {
+                            labels: sortedLabels,
+                            datasets: [{
+                                data: sortedData,
+                                backgroundColor: backgroundColors.slice(0, sortedLabels.length),
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        font: { family: 'Montserrat', size: 11 },
+                                        boxWidth: 12,
+                                        padding: 15,
+                                        // MAGIA AQUÍ: Genera el texto "Categoría: $Valor"
+                                        generateLabels: (chart) => {
+                                            const data = chart.data;
+                                            if (data.labels.length && data.datasets.length) {
+                                                return data.labels.map((label, i) => {
+                                                    const value = data.datasets[0].data[i];
+                                                    const formattedValue = new Intl.NumberFormat('es-CO', { 
+                                                        style: 'currency', currency: 'COP', maximumFractionDigits: 0 
+                                                    }).format(value);
+                                                    return {
+                                                        text: `${label}: ${formattedValue}`,
+                                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                                        hidden: isNaN(data.datasets[0].data[i]),
+                                                        index: i
+                                                    };
+                                                });
+                                            }
+                                            return [];
+                                        }
+                                    }
+                                }
+                            },
+                            layout: { padding: { right: 10 } }
+                        }
+                    });
+
+                    // --- 2. GRÁFICO DE BARRAS (HISTÓRICO) ---
+                    const months = {}; 
+                    transactions.value.forEach(t => { 
+                        const k = t.date.substring(0, 7); 
+                        if(!months[k]) months[k] = { inc: 0, exp: 0 }; 
+                        t.type === 'income' ? months[k].inc += t.amount : months[k].exp += t.amount; 
+                    });
                     const labels = Object.keys(months).sort().slice(-6);
-                    chartHist = new Chart(ctxHist, { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#2e7d32', borderRadius: 4 }, { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#c62828', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false, grid: { display: false } }, y: { grid: { display: false } } }, plugins: { legend: { labels: { font: { family: 'Montserrat' } } } } } });
+                    
+                    chartHist = new Chart(ctxHist, { 
+                        type: 'bar', 
+                        data: { 
+                            labels, 
+                            datasets: [
+                                { label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#2e7d32', borderRadius: 4 }, 
+                                { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#c62828', borderRadius: 4 }
+                            ] 
+                        }, 
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false, 
+                            scales: { x: { display: false, grid: { display: false } }, y: { grid: { display: false } } }, 
+                            plugins: { legend: { labels: { font: { family: 'Montserrat' } } } } 
+                        } 
+                    });
                 };
-                const updateCharts = () => { if (currentView.value === 'dashboard') renderCharts(); };
-                watch(currentView, (v) => { if(v==='dashboard') renderCharts(); });
-                watch(selectedDate, () => updateCharts());
 
                 return { appState, loadingMessage, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, formatMonthYear, navClass, exportToCSV, updateCharts, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection };
             }
