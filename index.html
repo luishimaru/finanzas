@@ -29,7 +29,7 @@
                             50: '#f1f8f3', 100: '#dcfce7', 500: '#2e7d32', 600: '#1b5e20', 700: '#14532d', cream: '#fcfbf7', gold: '#d4af37' 
                         } 
                     },
-                    screens: { 'xs': '375px' } // Breakpoint extra pequeño
+                    screens: { 'xs': '375px' }
                 } 
             } 
         }
@@ -39,7 +39,6 @@
         .fade-enter-from, .fade-leave-to { opacity: 0; }
         body { font-family: 'Montserrat', sans-serif; background-color: #fcfbf7; -webkit-tap-highlight-color: transparent; }
         .bg-gradient-dgg { background: linear-gradient(135deg, #2e7d32 0%, #14532d 100%); }
-        /* Ocultar barra de scroll en móvil pero permitir scroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -108,7 +107,7 @@
                 </div>
             </aside>
 
-            <main class="flex-1 overflow-y-auto overflow-x-hidden bg-brand-cream relative pb-24 md:pb-10 pt-4 px-4 md:p-10 no-scrollbar">
+            <main class="flex-1 overflow-y-auto overflow-x-hidden bg-brand-cream relative pb-28 md:pb-10 pt-4 px-4 md:p-10 no-scrollbar">
                 
                 <div v-if="currentView === 'dashboard'" class="space-y-6 animate-fade">
                     <div class="flex justify-between items-end mb-2">
@@ -233,14 +232,20 @@
                 </div>
             </main>
 
-            <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-40 pb-safe">
+            <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between items-center h-16 z-40 pb-safe px-6">
                 <button @click="currentView = 'dashboard'" :class="navClassMobile('dashboard')">
-                    <i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-medium">Inicio</span>
+                    <i class="fa-solid fa-chart-pie text-xl mb-0.5"></i><span class="text-[10px] font-medium">Inicio</span>
                 </button>
+
+                <button @click="currentView = 'transactions'" :class="navClassMobile('transactions')">
+                    <i class="fa-solid fa-list-ul text-xl mb-0.5"></i><span class="text-[10px] font-medium">Diario</span>
+                </button>
+
                 <div class="w-12"></div> <button @click="currentView = 'goals'" :class="navClassMobile('goals')">
-                    <i class="fa-solid fa-bullseye text-lg mb-1"></i><span class="text-[10px] font-medium">Metas</span>
+                    <i class="fa-solid fa-bullseye text-xl mb-0.5"></i><span class="text-[10px] font-medium">Metas</span>
                 </button>
-                <button @click="currentView = 'transactions'" class="absolute left-1/2 -top-6 transform -translate-x-1/2 bg-brand-600 text-white w-14 h-14 rounded-full shadow-lg shadow-brand-200 flex items-center justify-center text-2xl border-4 border-brand-cream z-50" @click.stop="openModal">
+                
+                <button @click="openModal" class="absolute left-1/2 -top-6 transform -translate-x-1/2 bg-brand-600 text-white w-14 h-14 rounded-full shadow-lg shadow-brand-200 flex items-center justify-center text-2xl border-4 border-brand-cream z-50">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </nav>
@@ -340,7 +345,6 @@
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
                 const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
-                // Detección de móvil para gráficos
                 const isMobile = window.innerWidth < 768;
 
                 onMounted(() => {
@@ -389,7 +393,6 @@
                 const formatDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                 const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
                 
-                // Clases dinámicas para menú
                 const navClassDesktop = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-l-4 border-brand-500 w-full shadow-sm" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-50 w-full transition";
                 const navClassMobile = (v) => currentView.value === v ? "flex flex-col items-center text-brand-600" : "flex flex-col items-center text-gray-400";
 
@@ -430,9 +433,7 @@
                     if (!ctxCat || !ctxHist) return;
                     if (chartCat) chartCat.destroy(); if (chartHist) chartHist.destroy();
 
-                    // CONFIGURACIÓN MÓVIL: Leyenda abajo en celular, derecha en PC
                     const legendPosition = window.innerWidth < 768 ? 'bottom' : 'right';
-                    
                     const cats = {}; getFiltered().filter(t => t.type === 'expense').forEach(t => { cats[t.category] = (cats[t.category] || 0) + Number(t.amount); });
                     const sortedLabels = Object.keys(cats).sort((a,b) => cats[b] - cats[a]);
                     const sortedData = sortedLabels.map(l => cats[l]);
@@ -445,7 +446,7 @@
                             responsive: true, maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    position: legendPosition, // AUTO-ADAPTABLE
+                                    position: legendPosition,
                                     labels: {
                                         boxWidth: 10, padding: 10, font: { size: 10, family: 'Montserrat' },
                                         generateLabels: (chart) => {
