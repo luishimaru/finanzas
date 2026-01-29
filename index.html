@@ -159,10 +159,20 @@
                 </div>
 
                 <div v-if="currentView === 'transactions'" class="animate-fade space-y-6">
-                    <header class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-brand-800">Libro Diario</h1>
-                        <button @click="exportToCSV" class="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 hover:text-brand-600 hover:border-brand-200 transition shadow-sm flex items-center gap-2"><i class="fa-solid fa-file-csv text-green-600"></i> Descargar Excel</button>
-                    </header>
+                    <header class="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-brand-800">Libro Diario</h1>
+        <p class="text-xs text-gray-500 font-medium">Viendo: <span class="text-brand-600">{{ formatMonthYear(selectedDate) }}</span></p>
+    </div>
+    
+    <div class="flex gap-2">
+        <input type="month" v-model="selectedDate" class="border border-gray-200 rounded-xl px-4 py-2 bg-white shadow-sm cursor-pointer text-brand-700 font-bold hover:border-brand-300 focus:ring-2 focus:ring-brand-500 outline-none transition text-sm">
+        
+        <button @click="exportToCSV" class="bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 hover:text-brand-600 hover:border-brand-200 transition shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-file-csv text-green-600"></i> <span class="hidden md:inline">Excel</span>
+        </button>
+    </div>
+</header>
                     <input v-model="searchTerm" type="text" placeholder="Buscar transacción..." class="w-full border border-gray-200 p-4 rounded-xl shadow-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <table class="w-full text-sm text-left text-gray-600">
@@ -423,7 +433,29 @@
                 const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0));
                 const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + Number(t.amount), 0));
                 
-                const filteredTransactions = computed(() => { let txs = transactions.value; if (searchTerm.value) { const term = searchTerm.value.toLowerCase(); txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); } return txs.sort((a,b) => new Date(b.date) - new Date(a.date)); });
+               const filteredTransactions = computed(() => { 
+    let txs = transactions.value; 
+
+    // 1. FILTRO DE FECHA (Mes Seleccionado)
+    if (selectedDate.value) {
+        const [y, m] = selectedDate.value.split('-');
+        txs = txs.filter(t => {
+            // Convertimos la fecha de la transacción para comparar
+            const d = new Date(t.date + 'T00:00:00');
+            // Verificamos si coincide el Mes y el Año
+            return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y);
+        });
+    }
+
+    // 2. FILTRO DE BÚSQUEDA (Si escribes en la barra)
+    if (searchTerm.value) { 
+        const term = searchTerm.value.toLowerCase(); 
+        txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); 
+    } 
+
+    // 3. ORDENAR POR FECHA (Lo más reciente primero)
+    return txs.sort((a,b) => new Date(b.date) - new Date(a.date)); 
+});
                 const getTotalGoalBalance = (goal) => { return (goal.initialAmount || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + Number(t.amount), 0); };
                 const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
 
