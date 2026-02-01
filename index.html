@@ -64,7 +64,7 @@
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
                         <span>Entrar con Google</span>
                     </button>
-                    <p class="text-[10px] text-gray-400 mt-6">Al entrar aceptas la Política de Privacidad de DGG.</p>
+                    <p class="text-[10px] text-gray-400 mt-6">Al entrar aceptas la Política de Privacidad de DGEG.</p>
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
             <header class="md:hidden h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-30 flex-shrink-0">
                 <div class="flex items-center gap-2">
                     <img src="logo.png" class="w-8 h-8" alt="Logo">
-                    <span class="font-bold text-brand-700 text-sm leading-tight">GESTOR<br>DGG</span>
+                    <span class="font-bold text-brand-700 text-sm leading-tight">GESTOR<br>DGEG</span>
                 </div>
                 <div v-if="user" class="flex items-center gap-3" @click="logout">
                     <span class="text-[10px] text-gray-400 font-medium mr-1">Salir <i class="fa-solid fa-right-from-bracket"></i></span>
@@ -174,12 +174,11 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-bold text-gray-800 text-sm truncate">{{ t.description }}</p>
-                                        <p v-if="t.type === 'initial'" class="text-[10px] text-blue-600 font-bold uppercase">Saldo Inicial • {{ t.account }}</p>
-                                        <p v-else class="text-[10px] text-gray-400 uppercase">{{ t.category }} • {{ t.account }}</p>
+                                        <p class="text-[10px] text-gray-400 uppercase">{{ t.category }} • {{ t.account }}</p>
                                     </div>
                                 </div>
                                 <div class="text-right flex-shrink-0 ml-2">
-                                    <p class="font-bold text-sm" :class="t.type === 'expense' ? 'text-red-500' : (t.type === 'initial' ? 'text-blue-600' : 'text-green-600')">
+                                    <p class="font-bold text-sm" :class="t.type === 'expense' ? 'text-red-500' : 'text-green-600'">
                                         {{ t.type === 'expense' ? '-' : '+' }}{{ formatCurrency(t.amount) }}
                                     </p>
                                     <button @click="deleteTransaction(t.id)" class="text-[10px] text-red-300 hover:text-red-500 mt-1">Eliminar</button>
@@ -245,10 +244,9 @@
                         <button @click="closeModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <form @submit.prevent="addTransaction" class="p-6 space-y-4">
-                        <div class="grid grid-cols-3 gap-2 p-1 bg-gray-100 rounded-xl">
+                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
                             <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-green-600 peer-checked:shadow-sm transition-all">Ingreso</div></label>
                             <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all">Gasto</div></label>
-                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="initial" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm transition-all">S. Inicial</div></label>
                         </div>
                         
                         <div class="relative">
@@ -256,14 +254,14 @@
                             <input v-model.number="form.amount" type="number" placeholder="0" class="w-full pl-8 pr-4 py-3 bg-gray-50 rounded-xl font-bold text-2xl text-gray-800 outline-none focus:ring-2 focus:ring-brand-500 transition">
                         </div>
                         
-                        <input v-model="form.description" type="text" required placeholder="Concepto (ej: Ahorros 2025)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-brand-500 text-sm">
+                        <input v-model="form.description" type="text" required placeholder="Concepto (ej: Almuerzo)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-brand-500 text-sm">
                         
                         <div class="grid grid-cols-2 gap-3">
-                            <select v-if="form.type !== 'initial'" v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear...</option></select>
-                            <select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white" :class="{'col-span-2': form.type === 'initial'}"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear...</option></select>
+                            <select v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear...</option></select>
+                            <select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear...</option></select>
                         </div>
                         
-                        <input v-if="form.category === 'new' && form.type !== 'initial'" v-model="newCategoryName" type="text" placeholder="Nombre nueva categoría..." class="w-full p-3 bg-brand-50 border border-brand-100 rounded-xl text-sm">
+                        <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nombre nueva categoría..." class="w-full p-3 bg-brand-50 border border-brand-100 rounded-xl text-sm">
                         <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nombre nueva cuenta..." class="w-full p-3 bg-blue-50 border border-blue-100 rounded-xl text-sm">
                         <input v-model="form.date" type="date" required class="w-full p-3 border border-gray-200 rounded-xl text-sm text-gray-500">
                         <button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-brand-200 active:scale-95 transition">Guardar</button>
@@ -362,9 +360,9 @@
                 const addTransaction = async () => {
                     if (isSubmitting.value) return; isSubmitting.value = true;
                     try {
-                        if (form.value.category === 'new' && form.value.type !== 'initial') { const n = newCategoryName.value.trim(); if(n){categories.value.push(n); form.value.category=n;} }
+                        if (form.value.category === 'new') { const n = newCategoryName.value.trim(); if(n){categories.value.push(n); form.value.category=n;} }
                         if (form.value.account === 'new') { const n = newAccountName.value.trim(); if(n){accounts.value.push(n); form.value.account=n;} }
-                        if (form.value.type === 'initial') form.value.category = 'Saldo Inicial';
+                        
                         transactions.value.push({ id: Date.now(), ...form.value, amount: Number(form.value.amount) }); await saveToCloud();
                         form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] }; newCategoryName.value = ''; newAccountName.value = '';
                         closeModal(); updateCharts();
@@ -393,9 +391,8 @@
 
                 const getFiltered = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y); }); };
                 
-                // LÓGICA V17: BALANCE MENSUAL (Usa getFiltered() en lugar de transactions.value)
+                // LÓGICA V18: BALANCE MENSUAL PURO (Sin Saldo Inicial)
                 const totalBalance = computed(() => getFiltered().reduce((acc, t) => {
-                    if (t.type === 'initial') return acc + Number(t.amount); 
                     if (t.category === 'Inversión') return acc - Number(t.amount); 
                     if (t.type === 'income') return acc + Number(t.amount); 
                     return acc - Number(t.amount); 
@@ -457,7 +454,6 @@
                     });
 
                     const months = {}; transactions.value.forEach(t => { 
-                        if(t.type === 'initial') return;
                         const k = t.date.substring(0, 7); if(!months[k]) months[k] = { inc: 0, exp: 0 }; 
                         t.type === 'income' ? months[k].inc += Number(t.amount) : months[k].exp += Number(t.amount); 
                     });
