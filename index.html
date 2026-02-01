@@ -103,7 +103,6 @@
             </aside>
 
             <main class="flex-1 overflow-y-auto overflow-x-hidden bg-brand-cream relative pb-28 md:pb-10 pt-4 px-4 md:p-10 no-scrollbar">
-                
                 <div v-if="currentView === 'dashboard'" class="space-y-6 animate-fade">
                     <div class="flex justify-between items-end mb-2">
                         <div>
@@ -112,7 +111,6 @@
                         </div>
                         <input type="month" v-model="selectedDate" class="bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold text-brand-700 shadow-sm outline-none">
                     </div>
-
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 col-span-2 md:col-span-1">
                             <span class="text-gray-400 font-bold text-[10px] uppercase tracking-wider block mb-1">Balance Mensual</span>
@@ -134,7 +132,6 @@
                             <i class="fa-solid fa-seedling absolute top-2 right-2 text-5xl text-white opacity-20"></i>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 lg:col-span-1 flex flex-col">
                             <h3 class="font-bold text-brand-800 mb-4 text-sm">Gastos por Categoría</h3>
@@ -152,47 +149,26 @@
 
                 <div v-if="currentView === 'transactions'" class="space-y-4 animate-fade">
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-gray-100 sticky top-0 z-10">
-                        <div>
-                            <h1 class="text-lg font-bold text-brand-800">Libro Diario</h1>
-                            <p class="text-[10px] text-gray-500">{{ formatMonthYear(selectedDate) }}</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <input type="month" v-model="selectedDate" class="w-8 h-8 rounded-lg border border-gray-200 text-transparent focus:text-gray-800 bg-calendar-icon bg-center bg-no-repeat bg-[length:16px] overflow-hidden cursor-pointer p-0">
-                            <button @click="exportToCSV" class="bg-brand-50 text-brand-600 w-8 h-8 rounded-lg flex items-center justify-center border border-brand-100"><i class="fa-solid fa-file-csv"></i></button>
-                        </div>
+                        <div><h1 class="text-lg font-bold text-brand-800">Libro Diario</h1><p class="text-[10px] text-gray-500">{{ formatMonthYear(selectedDate) }}</p></div>
+                        <div class="flex gap-2"><input type="month" v-model="selectedDate" class="w-8 h-8 rounded-lg border border-gray-200 text-transparent focus:text-gray-800 bg-calendar-icon bg-center bg-no-repeat bg-[length:16px] overflow-hidden cursor-pointer p-0"><button @click="exportToCSV" class="bg-brand-50 text-brand-600 w-8 h-8 rounded-lg flex items-center justify-center border border-brand-100"><i class="fa-solid fa-file-csv"></i></button></div>
                     </div>
-                    
                     <input v-model="searchTerm" type="text" placeholder="🔍 Buscar..." class="w-full border border-gray-200 p-3 rounded-xl shadow-sm focus:outline-none focus:border-brand-500 text-sm">
-                    
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div v-if="filteredTransactions.length === 0" class="p-8 text-center text-gray-400 text-sm">Sin movimientos.</div>
                         <div v-else>
                             <div v-for="t in filteredTransactions" :key="t.id" class="p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
                                 <div class="flex gap-3 items-center overflow-hidden">
-                                    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center text-gray-500 flex-shrink-0 text-xs font-bold">
-                                        {{ new Date(t.date).getDate() }}
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="font-bold text-gray-800 text-sm truncate">{{ t.description }}</p>
-                                        <p class="text-[10px] text-gray-400 uppercase">{{ t.category }} • {{ t.account }}</p>
-                                    </div>
+                                    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center text-gray-500 flex-shrink-0 text-xs font-bold">{{ new Date(t.date).getDate() }}</div>
+                                    <div class="min-w-0"><p class="font-bold text-gray-800 text-sm truncate">{{ t.description }}</p><p class="text-[10px] text-gray-400 uppercase">{{ t.category }} • {{ t.account }}</p></div>
                                 </div>
-                                <div class="text-right flex-shrink-0 ml-2">
-                                    <p class="font-bold text-sm" :class="t.type === 'expense' ? 'text-red-500' : 'text-green-600'">
-                                        {{ t.type === 'expense' ? '-' : '+' }}{{ formatCurrency(t.amount) }}
-                                    </p>
-                                    <button @click="deleteTransaction(t.id)" class="text-[10px] text-red-300 hover:text-red-500 mt-1">Eliminar</button>
-                                </div>
+                                <div class="text-right flex-shrink-0 ml-2"><p class="font-bold text-sm" :class="t.type === 'expense' ? 'text-red-500' : 'text-green-600'">{{ t.type === 'expense' ? '-' : '+' }}{{ formatCurrency(t.amount) }}</p><button @click="deleteTransaction(t.id)" class="text-[10px] text-red-300 hover:text-red-500 mt-1">Eliminar</button></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div v-if="currentView === 'goals'" class="space-y-4 animate-fade">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-xl font-bold text-brand-800">Mis Metas</h1>
-                        <button @click="openGoalModal" class="bg-brand-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-md"><i class="fa-solid fa-plus mr-1"></i> Nueva</button>
-                    </div>
+                    <div class="flex justify-between items-center"><h1 class="text-xl font-bold text-brand-800">Mis Metas</h1><button @click="openGoalModal" class="bg-brand-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-md"><i class="fa-solid fa-plus mr-1"></i> Nueva</button></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div v-for="goal in goals" :key="goal.id" class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative">
                             <div class="flex justify-between items-start mb-4">
@@ -205,93 +181,39 @@
                                 </div>
                                 <button @click="deleteGoal(goal.id)" class="text-gray-300 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
                             </div>
-                            <div class="mb-4">
-                                <div class="flex justify-between text-[10px] font-bold uppercase text-gray-400 mb-1">
-                                    <span class="text-brand-600">{{ formatCurrency(getTotalGoalBalance(goal)) }}</span>
-                                    <span>{{ formatCurrency(goal.targetAmount) }}</span>
-                                </div>
-                                <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                    <div class="bg-brand-500 h-2 rounded-full transition-all duration-1000" :style="{ width: Math.min((getTotalGoalBalance(goal) / goal.targetAmount * 100), 100) + '%' }"></div>
-                                </div>
+                            <div class="mb-2">
+                                <div class="flex justify-between text-[10px] font-bold uppercase text-gray-400 mb-1"><span class="text-brand-600">{{ formatCurrency(getTotalGoalBalance(goal)) }}</span><span>{{ formatCurrency(goal.targetAmount) }}</span></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="bg-brand-500 h-2 rounded-full transition-all duration-1000" :style="{ width: Math.min((getTotalGoalBalance(goal) / goal.targetAmount * 100), 100) + '%' }"></div></div>
                             </div>
+                            
+                            <div class="flex items-center gap-1 mb-4">
+                                <span class="bg-brand-50 text-brand-600 text-[9px] font-bold px-2 py-0.5 rounded-full border border-brand-100">
+                                    <i class="fa-solid fa-coins mr-1"></i>Generando aprox: {{ formatCurrency(calculateMonthlyYield(goal)) }} este mes*
+                                </span>
+                            </div>
+
                             <div class="bg-brand-50/50 p-3 rounded-lg flex gap-3 items-center border border-brand-100">
                                 <i class="fa-solid fa-hourglass-half text-brand-600 text-lg"></i>
-                                <div>
-                                    <p class="font-bold text-brand-900 text-sm leading-none">{{ calculateDynamicProjection(goal) }} meses</p>
-                                    <p class="text-[10px] text-brand-600 italic">"{{ getMotivationMessage(calculateDynamicProjection(goal)) }}"</p>
-                                </div>
+                                <div><p class="font-bold text-brand-900 text-sm leading-none">{{ calculateDynamicProjection(goal) }} meses</p><p class="text-[10px] text-brand-600 italic">"{{ getMotivationMessage(calculateDynamicProjection(goal)) }}"</p></div>
                             </div>
                         </div>
                     </div>
+                    <p class="text-[9px] text-gray-400 px-2">*Los rendimientos son estimaciones teóricas basadas en tu saldo actual y la tasa E.A. configurada.</p>
                 </div>
             </main>
 
-            <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between items-center h-16 z-40 pb-safe px-6">
-                <button @click="currentView = 'dashboard'" :class="navClassMobile('dashboard')"><i class="fa-solid fa-chart-pie text-xl mb-0.5"></i><span class="text-[10px] font-medium">Inicio</span></button>
-                <button @click="currentView = 'transactions'" :class="navClassMobile('transactions')"><i class="fa-solid fa-list-ul text-xl mb-0.5"></i><span class="text-[10px] font-medium">Diario</span></button>
-                <div class="w-12"></div>
-                <button @click="currentView = 'goals'" :class="navClassMobile('goals')"><i class="fa-solid fa-bullseye text-xl mb-0.5"></i><span class="text-[10px] font-medium">Metas</span></button>
-                <button @click="openModal" class="absolute left-1/2 -top-6 transform -translate-x-1/2 bg-brand-600 text-white w-14 h-14 rounded-full shadow-lg shadow-brand-200 flex items-center justify-center text-2xl border-4 border-brand-cream z-50"><i class="fa-solid fa-plus"></i></button>
-            </nav>
-
+            <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between items-center h-16 z-40 pb-safe px-6"><button @click="currentView = 'dashboard'" :class="navClassMobile('dashboard')"><i class="fa-solid fa-chart-pie text-xl mb-0.5"></i><span class="text-[10px] font-medium">Inicio</span></button><button @click="currentView = 'transactions'" :class="navClassMobile('transactions')"><i class="fa-solid fa-list-ul text-xl mb-0.5"></i><span class="text-[10px] font-medium">Diario</span></button><div class="w-12"></div><button @click="currentView = 'goals'" :class="navClassMobile('goals')"><i class="fa-solid fa-bullseye text-xl mb-0.5"></i><span class="text-[10px] font-medium">Metas</span></button><button @click="openModal" class="absolute left-1/2 -top-6 transform -translate-x-1/2 bg-brand-600 text-white w-14 h-14 rounded-full shadow-lg shadow-brand-200 flex items-center justify-center text-2xl border-4 border-brand-cream z-50"><i class="fa-solid fa-plus"></i></button></nav>
             <button @click="openModal" class="hidden md:flex absolute bottom-8 right-8 w-16 h-16 bg-brand-600 text-white rounded-full shadow-xl hover:bg-brand-700 hover:scale-105 transition-all items-center justify-center z-50 text-3xl ring-4 ring-brand-50"><i class="fa-solid fa-plus"></i></button>
 
             <div v-if="isModalOpen" class="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-4">
                 <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
-                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden transform transition-all pb-6 md:pb-0">
-                    <div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100">
-                        <h3 class="font-bold text-lg text-gray-800">Registrar</h3>
-                        <button @click="closeModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <form @submit.prevent="addTransaction" class="p-6 space-y-4">
-                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
-                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-green-600 peer-checked:shadow-sm transition-all">Ingreso</div></label>
-                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all">Gasto</div></label>
-                        </div>
-                        
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
-                            <input v-model.number="form.amount" type="number" placeholder="0" class="w-full pl-8 pr-4 py-3 bg-gray-50 rounded-xl font-bold text-2xl text-gray-800 outline-none focus:ring-2 focus:ring-brand-500 transition">
-                        </div>
-                        
-                        <input v-model="form.description" type="text" required placeholder="Concepto (ej: Almuerzo)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-brand-500 text-sm">
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            <select v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear...</option></select>
-                            <select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear...</option></select>
-                        </div>
-                        
-                        <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nombre nueva categoría..." class="w-full p-3 bg-brand-50 border border-brand-100 rounded-xl text-sm">
-                        <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nombre nueva cuenta..." class="w-full p-3 bg-blue-50 border border-blue-100 rounded-xl text-sm">
-                        <input v-model="form.date" type="date" required class="w-full p-3 border border-gray-200 rounded-xl text-sm text-gray-500">
-                        <button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-brand-200 active:scale-95 transition">Guardar</button>
-                    </form>
-                </div>
+                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden transform transition-all pb-6 md:pb-0"><div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-lg text-gray-800">Registrar</h3><button @click="closeModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form @submit.prevent="addTransaction" class="p-6 space-y-4"><div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl"><label class="cursor-pointer block"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-green-600 peer-checked:shadow-sm transition-all">Ingreso</div></label><label class="cursor-pointer block"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all">Gasto</div></label></div><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span><input v-model.number="form.amount" type="number" placeholder="0" class="w-full pl-8 pr-4 py-3 bg-gray-50 rounded-xl font-bold text-2xl text-gray-800 outline-none focus:ring-2 focus:ring-brand-500 transition"></div><input v-model="form.description" type="text" required placeholder="Concepto" class="w-full p-3 border border-gray-200 rounded-xl outline-none text-sm"><div class="grid grid-cols-2 gap-3"><select v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear...</option></select><select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear...</option></select></div><input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nueva categoría" class="w-full p-3 bg-brand-50 border rounded-xl text-sm"><input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nueva cuenta" class="w-full p-3 bg-blue-50 border rounded-xl text-sm"><input v-model="form.date" type="date" required class="w-full p-3 border rounded-xl text-sm text-gray-500"><button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Guardar</button></form></div>
             </div>
 
             <div v-if="isGoalModalOpen" class="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-4">
                 <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="closeGoalModal"></div>
-                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden pb-6 md:pb-0">
-                    <div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100">
-                        <h3 class="font-bold text-lg text-gray-800">Nueva Meta</h3>
-                        <button @click="closeGoalModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <form @submit.prevent="addGoal" class="p-6 space-y-4">
-                        <input v-model="goalForm.name" type="text" required placeholder="Nombre Meta (ej: Carro)" class="w-full p-3 bg-gray-50 border-transparent focus:bg-white border focus:border-brand-500 rounded-xl font-bold text-lg">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Meta ($)</label><input v-model.number="goalForm.targetAmount" type="number" class="w-full p-3 border border-gray-200 rounded-xl text-sm"></div>
-                            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Inicio ($)</label><input v-model.number="goalForm.initialAmount" type="number" class="w-full p-3 border border-gray-200 rounded-xl text-sm"></div>
-                        </div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cuenta</label><select v-model="goalForm.linkedAccount" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option></select></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Rentabilidad % EA</label><input v-model.number="goalForm.apy" type="number" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl text-sm"></div>
-                            <div><label class="text-[10px] font-bold text-brand-600 uppercase ml-1">Aporte Mensual</label><input v-model.number="goalForm.monthlyContribution" type="number" class="w-full p-3 border border-brand-200 bg-brand-50 rounded-xl text-sm font-bold text-brand-800"></div>
-                        </div>
-                        <button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Crear Meta</button>
-                    </form>
-                </div>
+                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden pb-6 md:pb-0"><div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-lg text-gray-800">Nueva Meta</h3><button @click="closeGoalModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form @submit.prevent="addGoal" class="p-6 space-y-4"><input v-model="goalForm.name" type="text" required placeholder="Nombre Meta" class="w-full p-3 bg-gray-50 rounded-xl font-bold text-lg text-gray-800 outline-none"><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Meta ($)</label><input v-model.number="goalForm.targetAmount" type="number" class="w-full p-3 border rounded-xl text-sm outline-none"></div><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Inicio ($)</label><input v-model.number="goalForm.initialAmount" type="number" class="w-full p-3 border rounded-xl text-sm outline-none"></div></div><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cuenta</label><select v-model="goalForm.linkedAccount" class="w-full p-3 border rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option></select></div><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Rentabilidad % EA</label><input v-model.number="goalForm.apy" type="number" step="0.01" class="w-full p-3 border rounded-xl text-sm outline-none"></div><div><label class="text-[10px] font-bold text-brand-600 uppercase ml-1">Aporte Mensual</label><input v-model.number="goalForm.monthlyContribution" type="number" class="w-full p-3 border border-brand-200 bg-brand-50 rounded-xl text-sm font-bold text-brand-800 outline-none"></div></div><button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Crear Meta</button></form></div>
             </div>
-
         </template>
     </div>
 
@@ -305,31 +227,21 @@
             appId: "1:202908727294:web:0a1c05938ed208135db2af",
             measurementId: "G-CYXL4GEYTC"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
-
         const { createApp, ref, computed, onMounted, watch, nextTick } = Vue;
 
         createApp({
             setup() {
-                const appState = ref('loading'); 
-                const user = ref(null); 
-                const currentView = ref('dashboard');
-                const isModalOpen = ref(false); 
-                const isGoalModalOpen = ref(false); 
-                const isSubmitting = ref(false); 
-                const searchTerm = ref('');
-                const selectedDate = ref(new Date().toISOString().slice(0, 7));
-                const newCategoryName = ref(''); 
-                const newAccountName = ref('');
-                const transactions = ref([]); 
-                const goals = ref([]);
+                const appState = ref('loading'); const user = ref(null); const currentView = ref('dashboard');
+                const isModalOpen = ref(false); const isGoalModalOpen = ref(false); const isSubmitting = ref(false); 
+                const searchTerm = ref(''); const selectedDate = ref(new Date().toISOString().slice(0, 7));
+                const newCategoryName = ref(''); const newAccountName = ref('');
+                const transactions = ref([]); const goals = ref([]);
                 const categories = ref(['Alimentación', 'Vivienda', 'Transporte', 'Entretenimiento', 'Salud', 'Salario', 'Inversión']);
                 const accounts = ref(['Efectivo']);
-                
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
                 const goalForm = ref({ name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 });
 
@@ -362,7 +274,6 @@
                     try {
                         if (form.value.category === 'new') { const n = newCategoryName.value.trim(); if(n){categories.value.push(n); form.value.category=n;} }
                         if (form.value.account === 'new') { const n = newAccountName.value.trim(); if(n){accounts.value.push(n); form.value.account=n;} }
-                        
                         transactions.value.push({ id: Date.now(), ...form.value, amount: Number(form.value.amount) }); await saveToCloud();
                         form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] }; newCategoryName.value = ''; newAccountName.value = '';
                         closeModal(); updateCharts();
@@ -391,13 +302,7 @@
 
                 const getFiltered = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y); }); };
                 
-                // LÓGICA V18: BALANCE MENSUAL PURO (Sin Saldo Inicial)
-                const totalBalance = computed(() => getFiltered().reduce((acc, t) => {
-                    if (t.category === 'Inversión') return acc - Number(t.amount); 
-                    if (t.type === 'income') return acc + Number(t.amount); 
-                    return acc - Number(t.amount); 
-                }, 0));
-
+                const totalBalance = computed(() => getFiltered().reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0));
                 const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0));
                 const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0));
                 const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + Number(t.amount), 0));
@@ -411,62 +316,39 @@
 
                 const getTotalGoalBalance = (goal) => { return (goal.initialAmount || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + Number(t.amount), 0); };
                 const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
+                
+                // NUEVA FUNCIÓN: Rendimiento Mensual Aproximado
+                const calculateMonthlyYield = (goal) => {
+                    const saldo = getTotalGoalBalance(goal);
+                    if (saldo <= 0 || !goal.apy) return 0;
+                    // Tasa Mensual = (1 + EA)^(1/12) - 1
+                    const tasaMensual = Math.pow(1 + (goal.apy / 100), 1/12) - 1;
+                    return Math.round(saldo * tasaMensual);
+                };
+
                 const getMotivationMessage = (months) => { if(months === 0) return "¡Logrado! 🎉"; if(months <= 3) return "¡Recta final! 🏁"; if(months <= 12) return "¡Vamos! 🚀"; return "Constancia 🌱"; };
 
                 let chartCat = null, chartHist = null;
                 const renderCharts = async () => {
                     await nextTick();
-                    const ctxCat = document.getElementById('categoryChart');
-                    const ctxHist = document.getElementById('historyChart');
+                    const ctxCat = document.getElementById('categoryChart'); const ctxHist = document.getElementById('historyChart');
                     if (!ctxCat || !ctxHist) return;
                     if (chartCat) chartCat.destroy(); if (chartHist) chartHist.destroy();
-
-                    const legendPosition = window.innerWidth < 768 ? 'bottom' : 'right';
+                    const legendPos = window.innerWidth < 768 ? 'bottom' : 'right';
                     const cats = {}; getFiltered().filter(t => t.type === 'expense').forEach(t => { cats[t.category] = (cats[t.category] || 0) + Number(t.amount); });
                     const sortedLabels = Object.keys(cats).sort((a,b) => cats[b] - cats[a]);
-                    const sortedData = sortedLabels.map(l => cats[l]);
                     const bgColors = ['#2e7d32', '#c62828', '#f9a825', '#1565c0', '#6a1b9a', '#00838f', '#ad1457', '#4e342e'];
-
-                    chartCat = new Chart(ctxCat, {
-                        type: 'doughnut',
-                        data: { labels: sortedLabels, datasets: [{ data: sortedData, backgroundColor: bgColors, borderWidth: 0 }] },
-                        options: {
-                            responsive: true, maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: legendPosition,
-                                    labels: {
-                                        boxWidth: 10, padding: 10, font: { size: 10, family: 'Montserrat' },
-                                        generateLabels: (chart) => {
-                                            const data = chart.data;
-                                            if (data.labels.length && data.datasets.length) {
-                                                return data.labels.map((label, i) => {
-                                                    const value = data.datasets[0].data[i];
-                                                    const formattedValue = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
-                                                    return { text: `${label}: ${formattedValue}`, fillStyle: data.datasets[0].backgroundColor[i], hidden: isNaN(data.datasets[0].data[i]), index: i };
-                                                });
-                                            } return [];
-                                        }
-                                    }
-                                }
-                            }, layout: { padding: 0 }
-                        }
-                    });
-
-                    const months = {}; transactions.value.forEach(t => { 
-                        const k = t.date.substring(0, 7); if(!months[k]) months[k] = { inc: 0, exp: 0 }; 
-                        t.type === 'income' ? months[k].inc += Number(t.amount) : months[k].exp += Number(t.amount); 
-                    });
+                    chartCat = new Chart(ctxCat, { type: 'doughnut', data: { labels: sortedLabels, datasets: [{ data: sortedLabels.map(l => cats[l]), backgroundColor: bgColors, borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: legendPos, labels: { boxWidth: 10, font: { size: 10, family: 'Montserrat' }, generateLabels: (chart) => { const data = chart.data; return data.labels.map((label, i) => { const value = data.datasets[0].data[i]; return { text: `${label}: ${formatCurrency(value)}`, fillStyle: data.datasets[0].backgroundColor[i], index: i }; }); } } } } } });
+                    const months = {}; transactions.value.forEach(t => { const k = t.date.substring(0, 7); if(!months[k]) months[k] = { inc: 0, exp: 0 }; t.type === 'income' ? months[k].inc += Number(t.amount) : months[k].exp += Number(t.amount); });
                     const labels = Object.keys(months).sort().slice(-6);
-                    chartHist = new Chart(ctxHist, { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#2e7d32', borderRadius: 4 }, { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#c62828', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false, grid: { display: false } }, y: { grid: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10, family: 'Montserrat' } } } } } });
+                    chartHist = new Chart(ctxHist, { type: 'bar', data: { labels, datasets: [{ label: 'Ingresos', data: labels.map(l => months[l].inc), backgroundColor: '#2e7d32', borderRadius: 4 }, { label: 'Gastos', data: labels.map(l => months[l].exp), backgroundColor: '#c62828', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10, family: 'Montserrat' } } } } } });
                 };
 
                 const updateCharts = () => { if (currentView.value === 'dashboard') setTimeout(renderCharts, 200); };
                 watch(currentView, (v) => { if(v==='dashboard') setTimeout(renderCharts, 100); });
                 watch(selectedDate, () => setTimeout(renderCharts, 100));
-                window.addEventListener('resize', () => { if(currentView.value === 'dashboard') renderCharts(); });
 
-                return { appState, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, formatMonthYear, navClassDesktop, navClassMobile, exportToCSV, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection, getMotivationMessage };
+                return { appState, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, formatMonthYear, navClassDesktop, navClassMobile, exportToCSV, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection, getMotivationMessage, calculateMonthlyYield };
             }
         }).mount('#app');
     </script>
