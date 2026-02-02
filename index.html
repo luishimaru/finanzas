@@ -103,6 +103,7 @@
             </aside>
 
             <main class="flex-1 overflow-y-auto overflow-x-hidden bg-brand-cream relative pb-28 md:pb-10 pt-4 px-4 md:p-10 no-scrollbar">
+                
                 <div v-if="currentView === 'dashboard'" class="space-y-6 animate-fade">
                     <div class="flex justify-between items-end mb-2">
                         <div>
@@ -111,6 +112,7 @@
                         </div>
                         <input type="month" v-model="selectedDate" class="bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold text-brand-700 shadow-sm outline-none">
                     </div>
+
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 col-span-2 md:col-span-1">
                             <span class="text-gray-400 font-bold text-[10px] uppercase tracking-wider block mb-1">Balance Mensual</span>
@@ -132,6 +134,7 @@
                             <i class="fa-solid fa-seedling absolute top-2 right-2 text-5xl text-white opacity-20"></i>
                         </div>
                     </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 lg:col-span-1 flex flex-col">
                             <h3 class="font-bold text-brand-800 mb-4 text-sm">Gastos por Categoría</h3>
@@ -152,16 +155,26 @@
                         <div><h1 class="text-lg font-bold text-brand-800">Libro Diario</h1><p class="text-[10px] text-gray-500">{{ formatMonthYear(selectedDate) }}</p></div>
                         <div class="flex gap-2"><input type="month" v-model="selectedDate" class="w-8 h-8 rounded-lg border border-gray-200 text-transparent focus:text-gray-800 bg-calendar-icon bg-center bg-no-repeat bg-[length:16px] overflow-hidden cursor-pointer p-0"><button @click="exportToCSV" class="bg-brand-50 text-brand-600 w-8 h-8 rounded-lg flex items-center justify-center border border-brand-100"><i class="fa-solid fa-file-csv"></i></button></div>
                     </div>
+                    
                     <input v-model="searchTerm" type="text" placeholder="🔍 Buscar..." class="w-full border border-gray-200 p-3 rounded-xl shadow-sm focus:outline-none focus:border-brand-500 text-sm">
+                    
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div v-if="filteredTransactions.length === 0" class="p-8 text-center text-gray-400 text-sm">Sin movimientos.</div>
                         <div v-else>
                             <div v-for="t in filteredTransactions" :key="t.id" class="p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
                                 <div class="flex gap-3 items-center overflow-hidden">
-                                    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center text-gray-500 flex-shrink-0 text-xs font-bold">{{ new Date(t.date).getDate() }}</div>
-                                    <div class="min-w-0"><p class="font-bold text-gray-800 text-sm truncate">{{ t.description }}</p><p class="text-[10px] text-gray-400 uppercase">{{ t.category }} • {{ t.account }}</p></div>
+                                    <div class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center text-gray-500 flex-shrink-0 text-xs font-bold">{{ getDayOfMonth(t.date) }}</div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-gray-800 text-sm truncate">{{ t.description }}</p>
+                                        <p class="text-[10px] text-gray-400 uppercase">{{ t.category }} • {{ t.account }}</p>
+                                    </div>
                                 </div>
-                                <div class="text-right flex-shrink-0 ml-2"><p class="font-bold text-sm" :class="t.type === 'expense' ? 'text-red-500' : 'text-green-600'">{{ t.type === 'expense' ? '-' : '+' }}{{ formatCurrency(t.amount) }}</p><button @click="deleteTransaction(t.id)" class="text-[10px] text-red-300 hover:text-red-500 mt-1">Eliminar</button></div>
+                                <div class="text-right flex-shrink-0 ml-2">
+                                    <p class="font-bold text-sm" :class="t.type === 'expense' ? 'text-red-500' : 'text-green-600'">
+                                        {{ t.type === 'expense' ? '-' : '+' }}{{ formatCurrency(t.amount) }}
+                                    </p>
+                                    <button @click="deleteTransaction(t.id)" class="text-[10px] text-red-300 hover:text-red-500 mt-1">Eliminar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -288,7 +301,18 @@
                 const openGoalModal = () => isGoalModalOpen.value = true; const closeGoalModal = () => isGoalModalOpen.value = false;
                 
                 const formatCurrency = (val) => { const n = Number(val); return isNaN(n) ? "$0" : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n); };
-                const formatDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                
+                // CORRECCIÓN DE FECHA: Formato para lista
+                const formatDate = (d) => {
+                    const parts = d.split('-');
+                    return new Date(parts[0], parts[1] - 1, parts[2]).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                };
+
+                // CORRECCIÓN DE FECHA: Obtener solo el día
+                const getDayOfMonth = (d) => {
+                    return d.split('-')[2];
+                };
+
                 const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
                 const navClassDesktop = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-l-4 border-brand-500 w-full shadow-sm" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-50 w-full transition";
                 const navClassMobile = (v) => currentView.value === v ? "flex flex-col items-center text-brand-600" : "flex flex-col items-center text-gray-400";
@@ -300,7 +324,7 @@
                     const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `dgg_finanzas_${new Date().toISOString().slice(0,10)}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
 
-                const getFiltered = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y); }); };
+                const getFiltered = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const dParts = t.date.split('-'); return dParts[1] === m && dParts[0] === y; }); };
                 
                 const totalBalance = computed(() => getFiltered().reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0));
                 const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0));
@@ -309,19 +333,23 @@
                 
                 const filteredTransactions = computed(() => { 
                     let txs = transactions.value; 
-                    if (selectedDate.value) { const [y, m] = selectedDate.value.split('-'); txs = txs.filter(t => { const d = new Date(t.date + 'T00:00:00'); return d.getMonth() === (parseInt(m) - 1) && d.getFullYear() === parseInt(y); }); }
+                    if (selectedDate.value) { 
+                        const [y, m] = selectedDate.value.split('-'); 
+                        txs = txs.filter(t => { 
+                            const dParts = t.date.split('-'); 
+                            return dParts[1] === m && dParts[0] === y; 
+                        }); 
+                    }
                     if (searchTerm.value) { const term = searchTerm.value.toLowerCase(); txs = txs.filter(t => t.description.toLowerCase().includes(term) || t.category.toLowerCase().includes(term)); } 
-                    return txs.sort((a,b) => new Date(b.date) - new Date(a.date)); 
+                    return txs.sort((a,b) => b.date.localeCompare(a.date)); 
                 });
 
                 const getTotalGoalBalance = (goal) => { return (goal.initialAmount || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + Number(t.amount), 0); };
                 const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= goal.targetAmount) return 0; if (goal.monthlyContribution <= 0) return "∞"; const r = (goal.apy/100)/12; try { return Math.ceil(Math.log((goal.targetAmount * r + goal.monthlyContribution)/(ct * r + goal.monthlyContribution))/Math.log(1+r)); } catch(e){ return "Err"; } };
                 
-                // NUEVA FUNCIÓN: Rendimiento Mensual Aproximado
                 const calculateMonthlyYield = (goal) => {
                     const saldo = getTotalGoalBalance(goal);
                     if (saldo <= 0 || !goal.apy) return 0;
-                    // Tasa Mensual = (1 + EA)^(1/12) - 1
                     const tasaMensual = Math.pow(1 + (goal.apy / 100), 1/12) - 1;
                     return Math.round(saldo * tasaMensual);
                 };
@@ -346,9 +374,11 @@
 
                 const updateCharts = () => { if (currentView.value === 'dashboard') setTimeout(renderCharts, 200); };
                 watch(currentView, (v) => { if(v==='dashboard') setTimeout(renderCharts, 100); });
-                watch(selectedDate, () => setTimeout(renderCharts, 100));
+                watch(selectedDate, () => {
+                    updateCharts();
+                });
 
-                return { appState, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, formatMonthYear, navClassDesktop, navClassMobile, exportToCSV, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection, getMotivationMessage, calculateMonthlyYield };
+                return { appState, user, currentView, isModalOpen, isGoalModalOpen, isSubmitting, searchTerm, selectedDate, transactions, goals, categories, accounts, form, goalForm, newCategoryName, newAccountName, totalBalance, monthlyIncome, monthlyExpense, monthlyInvestment, filteredTransactions, addTransaction, deleteTransaction, addGoal, deleteGoal, login, logout, formatCurrency, formatDate, getDayOfMonth, formatMonthYear, navClassDesktop, navClassMobile, exportToCSV, openModal, closeModal, openGoalModal, closeGoalModal, getTotalGoalBalance, calculateDynamicProjection, getMotivationMessage, calculateMonthlyYield };
             }
         }).mount('#app');
     </script>
