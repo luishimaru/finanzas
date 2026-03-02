@@ -215,7 +215,7 @@
                             </div>
                         </div>
                     </div>
-                    <p class="text-[9px] text-gray-400 px-2">*Los rendimientos son estimaciones teóricas basadas en tu saldo actual y la tasa E.A. configurada.</p>
+                    <p class="text-[9px] text-gray-400 px-2">*Rendimientos calculados sobre el ahorro capturado desde la creación de la meta.</p>
                 </div>
             </main>
 
@@ -224,59 +224,18 @@
 
             <div v-if="isModalOpen" class="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-4">
                 <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
-                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden transform transition-all pb-6 md:pb-0">
-                    <div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100">
-                        <h3 class="font-bold text-lg text-gray-800">Registrar</h3>
-                        <button @click="closeModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <form @submit.prevent="addTransaction" class="p-6 space-y-4">
-                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
-                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-green-600 peer-checked:shadow-sm transition-all">Ingreso</div></label>
-                            <label class="cursor-pointer block"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all">Gasto</div></label>
-                        </div>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">{{ currencySymbol }}</span>
-                            <input v-model.number="form.amount" type="number" step="any" placeholder="0.00" class="w-full pl-8 pr-4 py-3 bg-gray-50 rounded-xl font-bold text-2xl text-gray-800 outline-none focus:ring-2 focus:ring-brand-500 transition">
-                        </div>
-                        <input v-model="form.description" type="text" required placeholder="Concepto" class="w-full p-3 border border-gray-200 rounded-xl outline-none text-sm">
-                        <div class="grid grid-cols-2 gap-3">
-                            <select v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear...</option></select>
-                            <select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear...</option></select>
-                        </div>
-                        <input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nueva categoría" class="w-full p-3 bg-brand-50 border rounded-xl text-sm">
-                        <input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nueva cuenta" class="w-full p-3 bg-blue-50 border rounded-xl text-sm">
-                        <input v-model="form.date" type="date" required class="w-full p-3 border rounded-xl text-sm text-gray-500">
-                        <button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Guardar</button>
-                    </form>
-                </div>
+                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden transform transition-all pb-6 md:pb-0"><div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-lg text-gray-800">Registrar</h3><button @click="closeModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form @submit.prevent="addTransaction" class="p-6 space-y-4"><div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl"><label class="cursor-pointer block"><input type="radio" v-model="form.type" value="income" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-green-600 peer-checked:shadow-sm transition-all">Ingreso</div></label><label class="cursor-pointer block"><input type="radio" v-model="form.type" value="expense" class="peer sr-only"><div class="py-2.5 text-center rounded-lg text-[10px] font-bold uppercase text-gray-500 peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all">Gasto</div></label></div><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">{{ currencySymbol }}</span><input v-model.number="form.amount" type="number" step="any" placeholder="0.00" class="w-full pl-8 pr-4 py-3 bg-gray-50 rounded-xl font-bold text-2xl text-gray-800 outline-none focus:ring-2 focus:ring-brand-500 transition"></div><input v-model="form.description" type="text" required placeholder="Concepto" class="w-full p-3 border border-gray-200 rounded-xl outline-none text-sm"><div class="grid grid-cols-2 gap-3"><select v-model="form.category" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="cat in categories" :value="cat">{{ cat }}</option><option value="new">+ Crear...</option></select><select v-model="form.account" class="w-full p-3 border border-gray-200 rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option><option value="new">+ Crear...</option></select></div><input v-if="form.category === 'new'" v-model="newCategoryName" type="text" placeholder="Nueva categoría" class="w-full p-3 bg-brand-50 border rounded-xl text-sm"><input v-if="form.account === 'new'" v-model="newAccountName" type="text" placeholder="Nueva cuenta" class="w-full p-3 bg-blue-50 border rounded-xl text-sm"><input v-model="form.date" type="date" required class="w-full p-3 border rounded-xl text-sm text-gray-500"><button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Guardar</button></form></div>
             </div>
 
             <div v-if="isGoalModalOpen" class="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-4">
                 <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="closeGoalModal"></div>
-                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden pb-6 md:pb-0">
-                    <div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100">
-                        <h3 class="font-bold text-lg text-gray-800">Nueva Meta</h3>
-                        <button @click="closeGoalModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <form @submit.prevent="addGoal" class="p-6 space-y-4">
-                        <input v-model="goalForm.name" type="text" required placeholder="Nombre Meta" class="w-full p-3 bg-gray-50 rounded-xl font-bold text-lg text-gray-800 outline-none">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Meta ({{ currencySymbol }})</label><input v-model.number="goalForm.targetAmount" type="number" step="any" class="w-full p-3 border rounded-xl text-sm outline-none"></div>
-                            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Inicio ({{ currencySymbol }})</label><input v-model.number="goalForm.initialAmount" type="number" step="any" class="w-full p-3 border rounded-xl text-sm outline-none"></div>
-                        </div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cuenta</label><select v-model="goalForm.linkedAccount" class="w-full p-3 border rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option></select></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Rentabilidad % EA</label><input v-model.number="goalForm.apy" type="number" step="0.01" class="w-full p-3 border rounded-xl text-sm outline-none"></div>
-                            <div><label class="text-[10px] font-bold text-brand-600 uppercase ml-1">Aporte Mensual</label><input v-model.number="goalForm.monthlyContribution" type="number" step="any" class="w-full p-3 border border-brand-200 bg-brand-50 rounded-xl text-sm font-bold text-brand-800 outline-none"></div>
-                        </div>
-                        <button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Crear Meta</button>
-                    </form>
-                </div>
+                <div class="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl relative z-10 overflow-hidden pb-6 md:pb-0"><div class="bg-white px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-lg text-gray-800">Nueva Meta</h3><button @click="closeGoalModal" class="bg-gray-100 p-2 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form @submit.prevent="addGoal" class="p-6 space-y-4"><input v-model="goalForm.name" type="text" required placeholder="Nombre Meta" class="w-full p-3 bg-gray-50 rounded-xl font-bold text-lg text-gray-800 outline-none"><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Meta ({{ currencySymbol }})</label><input v-model.number="goalForm.targetAmount" type="number" step="any" class="w-full p-3 border rounded-xl text-sm outline-none"></div><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Inicio ({{ currencySymbol }})</label><input v-model.number="goalForm.initialAmount" type="number" step="any" class="w-full p-3 border rounded-xl text-sm outline-none"></div></div><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cuenta</label><select v-model="goalForm.linkedAccount" class="w-full p-3 border rounded-xl text-sm bg-white"><option v-for="acc in accounts" :value="acc">{{ acc }}</option></select></div><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Rentabilidad % EA</label><input v-model.number="goalForm.apy" type="number" step="0.01" class="w-full p-3 border rounded-xl text-sm outline-none"></div><div><label class="text-[10px] font-bold text-brand-600 uppercase ml-1">Aporte Mensual</label><input v-model.number="goalForm.monthlyContribution" type="number" step="any" class="w-full p-3 border border-brand-200 bg-brand-50 rounded-xl text-sm font-bold text-brand-800 outline-none"></div></div><button type="submit" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition">Crear Meta</button></form></div>
             </div>
         </template>
     </div>
 
     <script>
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDhRNMv23s-v0BPcozOJL5Zjl_j06akf_A",
             authDomain: "de-grano-en-grano-b8882.firebaseapp.com",
@@ -301,8 +260,6 @@
                 const transactions = ref([]); const goals = ref([]);
                 const categories = ref(['Alimentación', 'Vivienda', 'Transporte', 'Entretenimiento', 'Salud', 'Salario', 'Inversión']);
                 const accounts = ref(['Efectivo']);
-                
-                // Nueva variable para moneda
                 const currencySymbol = ref('$');
 
                 const form = ref({ type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] });
@@ -320,7 +277,6 @@
                         const doc = await db.collection('users').doc(uid).get();
                         if (doc.exists) { 
                             const d = doc.data(); 
-                            // parseFloat asegura que los decimales se carguen correctamente
                             transactions.value = (d.transactions || []).map(t => ({...t, amount: parseFloat(t.amount) || 0}));
                             goals.value = d.goals || []; 
                             if(d.categories) categories.value = [...new Set([...categories.value, ...d.categories])]; 
@@ -357,11 +313,8 @@
                     try {
                         if (form.value.category === 'new') { const n = newCategoryName.value.trim(); if(n){categories.value.push(n); form.value.category=n;} }
                         if (form.value.account === 'new') { const n = newAccountName.value.trim(); if(n){accounts.value.push(n); form.value.account=n;} }
-                        
-                        // Guardamos como float para soportar centavos
                         const val = parseFloat(form.value.amount) || 0;
                         transactions.value.push({ id: Date.now(), ...form.value, amount: val }); 
-                        
                         await saveToCloud();
                         form.value = { type: 'expense', amount: '', description: '', category: 'Alimentación', account: 'Efectivo', date: new Date().toISOString().split('T')[0] }; 
                         newCategoryName.value = ''; newAccountName.value = '';
@@ -370,22 +323,33 @@
                 };
 
                 const deleteTransaction = async (id) => { if(confirm("¿Eliminar?")) { transactions.value = transactions.value.filter(t => t.id !== id); await saveToCloud(); updateCharts(); }};
-                const addGoal = async () => { goals.value.push({ id: Date.now(), ...goalForm.value }); await saveToCloud(); closeGoalModal(); goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 }; };
+                
+                // CORRECCIÓN V20: Se guarda 'createdAt' para que la meta sea independiente de ahorros viejos
+                const addGoal = async () => { 
+                    const newGoal = { 
+                        id: Date.now(), 
+                        ...goalForm.value, 
+                        createdAt: Date.now() // Captura el momento exacto de creación
+                    };
+                    goals.value.push(newGoal); 
+                    await saveToCloud(); 
+                    closeGoalModal(); 
+                    goalForm.value = { name: '', targetAmount: '', initialAmount: 0, linkedAccount: 'Efectivo', apy: 13, monthlyContribution: 0 }; 
+                };
+
                 const deleteGoal = async (id) => { if(confirm("¿Eliminar meta?")) { goals.value = goals.value.filter(g => g.id !== id); await saveToCloud(); }};
 
                 const openModal = () => { isSubmitting.value = false; isModalOpen.value = true; }; const closeModal = () => isModalOpen.value = false;
                 const openGoalModal = () => isGoalModalOpen.value = true; const closeGoalModal = () => isGoalModalOpen.value = false;
                 
-                // Formateador dinámico
                 const formatCurrency = (val) => { 
                     const n = parseFloat(val) || 0;
-                    // Intl.NumberFormat maneja automáticamente decimales según la región
                     return new Intl.NumberFormat('es-ES', { 
                         style: 'currency', 
                         currency: currencySymbol.value === '$' ? 'USD' : 'EUR',
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 2
-                    }).format(n).replace('US', '').trim(); // Limpiamos el código de país
+                    }).format(n).replace('US', '').trim();
                 };
 
                 const formatDate = (d) => {
@@ -394,7 +358,6 @@
                 };
 
                 const getDayOfMonth = (d) => d.split('-')[2];
-
                 const formatMonthYear = (d) => { if(!d) return ""; const [y, m] = d.split('-'); return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); };
                 const navClassDesktop = (v) => currentView.value === v ? "flex items-center gap-3 px-4 py-3 rounded-lg bg-brand-50 text-brand-600 font-bold border-l-4 border-brand-500 w-full shadow-sm" : "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-50 w-full transition";
                 const navClassMobile = (v) => currentView.value === v ? "flex flex-col items-center text-brand-600" : "flex flex-col items-center text-gray-400";
@@ -409,9 +372,9 @@
                 const getFiltered = () => { if(!selectedDate.value) return []; const [y, m] = selectedDate.value.split('-'); return transactions.value.filter(t => { const dParts = t.date.split('-'); return dParts[1] === m && dParts[0] === y; }); };
                 
                 const totalBalance = computed(() => getFiltered().reduce((acc, t) => acc + (t.type === 'income' ? parseFloat(t.amount) : -parseFloat(t.amount)), 0));
-                const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + parseFloat(t.amount), 0));
-                const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + parseFloat(t.amount), 0));
-                const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + parseFloat(t.amount), 0));
+                const monthlyIncome = computed(() => getFiltered().filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0));
+                const monthlyExpense = computed(() => getFiltered().filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0));
+                const monthlyInvestment = computed(() => getFiltered().filter(t => t.category === 'Inversión').reduce((acc, t) => acc + Number(t.amount), 0));
                 
                 const filteredTransactions = computed(() => { 
                     let txs = transactions.value; 
@@ -420,9 +383,20 @@
                     return txs.sort((a,b) => b.date.localeCompare(a.date)); 
                 });
 
-                const getTotalGoalBalance = (goal) => { return (parseFloat(goal.initialAmount) || 0) + transactions.value.filter(t => t.category === 'Inversión' && t.account === goal.linkedAccount).reduce((acc, t) => acc + parseFloat(t.amount), 0); };
+                // LÓGICA V20 MEJORADA: Solo cuenta inversiones hechas DESPUÉS de crear la meta
+                const getTotalGoalBalance = (goal) => { 
+                    const baseAmount = parseFloat(goal.initialAmount) || 0;
+                    const investmentSum = transactions.value.filter(t => {
+                        const isCorrectCategory = t.category === 'Inversión';
+                        const isCorrectAccount = t.account === goal.linkedAccount;
+                        const isAfterCreation = t.id >= (goal.createdAt || 0); // Compara marcas de tiempo
+                        return isCorrectCategory && isCorrectAccount && isAfterCreation;
+                    }).reduce((acc, t) => acc + parseFloat(t.amount), 0);
+                    
+                    return baseAmount + investmentSum;
+                };
+
                 const calculateDynamicProjection = (goal) => { const ct = getTotalGoalBalance(goal); if (ct >= parseFloat(goal.targetAmount)) return 0; if (parseFloat(goal.monthlyContribution) <= 0) return "∞"; const r = (parseFloat(goal.apy)/100)/12; try { return Math.ceil(Math.log((parseFloat(goal.targetAmount) * r + parseFloat(goal.monthlyContribution))/(ct * r + parseFloat(goal.monthlyContribution)))/Math.log(1+r)); } catch(e){ return "Err"; } };
-                
                 const calculateMonthlyYield = (goal) => {
                     const saldo = getTotalGoalBalance(goal);
                     if (saldo <= 0 || !goal.apy) return 0;
